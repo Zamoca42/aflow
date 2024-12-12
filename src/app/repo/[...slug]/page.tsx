@@ -1,11 +1,10 @@
-import { RepoTreeContent } from "@/component/repo/content";
-import { RepoContentMenu } from "@/component/repo/content-menu";
-import { RepoHeader } from "@/component/repo/header";
 import { auth } from "@/lib/auth";
 import { GitHubClient } from "@/lib/github";
+import { AppRepoContent } from "@/component/repo/app-content";
 
 type SearchParams = Promise<{
   b: string;
+  visualize?: string;
 }>;
 
 type Params = Promise<{
@@ -34,22 +33,9 @@ export default async function RepoPage({ params, searchParams }: PageProps) {
   );
 
   return (
-    <>
-      <header className="flex h-16 shrink-0 items-center gap-2">
-        <RepoHeader />
-      </header>
-      <div className="flex flex-1 flex-col gap-4 px-4 pt-0">
-        <div className="min-h-[50vh] rounded-xl bg-sidebar">
-          <RepoContentMenu
-            treeStructure={structuredRepoTree}
-            repoName={repoName}
-          />
-          <RepoTreeContent
-            treeStructure={structuredRepoTree}
-            repoName={repoName}
-          />
-        </div>
-      </div>
-    </>
+    <AppRepoContent
+      repoName={repoName}
+      structuredRepoTree={structuredRepoTree}
+    />
   );
 }

@@ -13,12 +13,7 @@ export const TreeView = ({ elements: fileTree }: TreeItemProps) => {
   const { showIcons, showFiles } = useTreeView();
 
   return (
-    <Tree
-      className="pb-4 px-2"
-      indicator={true}
-      showIcons={showIcons}
-      showFiles={showFiles}
-    >
+    <Tree indicator={true} showIcons={showIcons} showFiles={showFiles}>
       {fileTree.map((element, _) => (
         <TreeItem
           key={element.id}
