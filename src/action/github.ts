@@ -1,7 +1,7 @@
 import ky from "ky";
 import { z } from "zod";
 import { Session } from "next-auth";
-import { TreeBuilder } from "@/lib/tree";
+import { TreeBuilder } from "@/action/tree";
 import { TreeStructureSchema } from "@/lib/schema";
 import { Repository, GitTreeResponse, InstallationInfo } from "@/type";
 

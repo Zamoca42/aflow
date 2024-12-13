@@ -8,9 +8,9 @@ import { TreeView } from "@/component/repo/tree-view";
 import { TreeViewElement } from "@/component/tree-view-api";
 import { Button } from "../ui/button";
 import { Loader2Icon, SparklesIcon } from "lucide-react";
-import { getArchitecture } from "@/lib/ai-visualize";
+import { getArchitecture } from "@/action/ai-visualize";
 import { useTreeView } from "@/context/view-filter";
-import { MarkdownTreeGenerator } from "@/lib/markdown";
+import { MarkdownTreeGenerator } from "@/action/markdown";
 import { useRouter } from "next/navigation";
 
 interface RepoContentProps {
@@ -42,9 +42,7 @@ export function AppRepoContent({
     setIsVisualizerActive(true);
     setIsLoading(true);
     try {
-      const { architecture } = await getArchitecture(
-        JSON.stringify(structuredRepoTree, null, 2)
-      );
+      const { architecture } = await getArchitecture(markdownTree);
       setGeneration(JSON.stringify(architecture, null, 2));
     } catch (error) {
       alert("Error during AI visualization");

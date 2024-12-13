@@ -1,5 +1,5 @@
 import { AppSidebar } from "@/component/sidebar/app-sidebar";
-import { getSidebarData } from "@/lib/sidebar";
+import { getSidebarData } from "@/action/sidebar";
 import { redirect } from "next/navigation";
 
 export default async function DefaultSidebar() {
