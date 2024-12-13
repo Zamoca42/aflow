@@ -4,7 +4,6 @@ import { Session } from "next-auth";
 import { TreeBuilder } from "@/lib/tree";
 import { TreeStructureSchema } from "@/lib/schema";
 import { Repository, GitTreeResponse, InstallationInfo } from "@/type";
-import { redirect } from "next/navigation";
 
 export class GitHubClient {
   private client: typeof ky;

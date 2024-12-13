@@ -1,5 +1,6 @@
 import { TreeViewElement } from "@/component/tree-view-api";
 import { z } from "zod";
+import { PROMPT } from "@/lib/constant";
 
 export const urlSafeBase64Pattern = /^[A-Za-z0-9_-]*$/;
 
@@ -13,3 +14,16 @@ export const TreeViewElementSchema: z.ZodType<TreeViewElement> = z.lazy(() =>
 );
 
 export const TreeStructureSchema = z.array(TreeViewElementSchema);
+
+export const NodeSchema = z.object({
+  title: z.string().min(1).describe(PROMPT.schemaDescription.nodes.title),
+  items: z.array(z.string().min(1))
+  .min(1)
+  .describe(PROMPT.schemaDescription.nodes.items)
+});
+
+export const ArchitectureSchema = z.object({
+  title: z.string().min(1).describe(PROMPT.schemaDescription.title),
+  nodes: z.array(NodeSchema).min(1).describe(PROMPT.schemaDescription.nodes.description),
+  flows: z.array(z.string().min(1)).min(1).describe(PROMPT.schemaDescription.flows)
+});

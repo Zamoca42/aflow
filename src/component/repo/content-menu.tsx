@@ -1,10 +1,8 @@
 "use client";
 
 import { copyToClipboard, downloadMarkdown } from "@/lib/share";
-import { TreeViewElement } from "@/component/tree-view-api";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTreeView } from "@/context/view-filter";
-import { MarkdownTreeGenerator } from "@/lib/markdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +12,7 @@ import {
 import { ClipboardIcon, DownloadIcon, MoreHorizontalIcon } from "lucide-react";
 import { Button } from "@/component/ui/button";
 import { Checkbox } from "@/component/ui/checkbox";
+import { TreeViewElement } from "@/component/tree-view-api";
 
 type CheckboxOptionProps = {
   id: string;
@@ -41,31 +40,30 @@ function CheckboxOption({
 }
 
 interface RepoContentMenuProps {
-  treeStructure: TreeViewElement[];
   repoName: string;
+  markdownTree: string;
+  structuredRepoTree: TreeViewElement[];
 }
 
 export function RepoContentMenu({
-  treeStructure,
+  structuredRepoTree,
+  markdownTree,
   repoName,
 }: RepoContentMenuProps) {
   const { showIcons, showFiles, setShowIcons, setShowFiles } = useTreeView();
   const [isCopied, setIsCopied] = useState(false);
-
-  const markdownTree = useMemo(
-    () =>
-      new MarkdownTreeGenerator(treeStructure, showIcons, showFiles).generate(),
-    [treeStructure, showIcons, showFiles]
-  );
 
   const handleCopyToClipboard = async () => {
     if (!markdownTree) {
       alert("No content to copy. The tree is empty.");
       return;
     }
-
     try {
-      await copyToClipboard(markdownTree);
+      await copyToClipboard(
+        process.env.NODE_ENV === "development"
+          ? JSON.stringify(structuredRepoTree, null, 2)
+          : markdownTree
+      );
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
