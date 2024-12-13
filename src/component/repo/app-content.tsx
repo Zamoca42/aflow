@@ -12,6 +12,7 @@ import { getArchitecture } from "@/action/ai-visualize";
 import { useTreeView } from "@/context/view-filter";
 import { MarkdownTreeGenerator } from "@/action/markdown";
 import { useRouter } from "next/navigation";
+import { convertToMermaid } from "@/lib/mermaid";
 
 interface RepoContentProps {
   repoName: string;
@@ -43,10 +44,11 @@ export function AppRepoContent({
     setIsLoading(true);
     try {
       const { architecture } = await getArchitecture(markdownTree);
-      setGeneration(JSON.stringify(architecture, null, 2));
+      const mermaidCode = convertToMermaid(architecture);
+      setGeneration(mermaidCode);
     } catch (error) {
       alert("Error during AI visualization");
-      router.push("/");
+      setIsVisualizerActive(false);
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +86,8 @@ export function AppRepoContent({
               <Loader2Icon className="w-8 h-8 animate-spin" />
             </div>
           ) : (
-            isVisualizerActive && <VisualizeTab generation={generation} />
+            isVisualizerActive &&
+            generation && <VisualizeTab mermaidCode={generation} />
           )}
         </div>
         <div className="min-h-[50vh] bg-sidebar/70 rounded-xl px-4 py-2">

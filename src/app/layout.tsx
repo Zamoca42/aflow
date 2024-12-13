@@ -1,6 +1,6 @@
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "@/app/globals.css";
 import { cn } from "@/lib/util";
 import { TreeViewProvider } from "@/context/view-filter";
 import { APP_DESCRIPTION, APP_TITLE } from "@/lib/constant";
@@ -50,10 +50,7 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
       </head>
       <body
-        className={cn(
-          "min-h-screen font-sans antialiased",
-          inter.variable
-        )}
+        className={cn("min-h-screen font-sans antialiased", inter.variable)}
       >
         <TreeViewProvider>
           <SidebarProvider>

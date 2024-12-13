@@ -1,28 +1,36 @@
-
-'use server';
+"use server";
 
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { ChatAnthropic } from "@langchain/anthropic";
 import { ArchitectureSchema } from "@/lib/schema";
 import { PROMPT } from "@/lib/constant";
 
+const TIMEOUT = 60000;
+
 export async function getArchitecture(input: string) {
-  'use server';
+  "use server";
 
   const model = new ChatGoogleGenerativeAI({
     model: "gemini-1.5-flash",
+    maxRetries: 3,
     temperature: 1.0,
-    apiKey: process.env.GOOGLE_API_KEY,
-    maxRetries: 2,
+   
   });
+
+  // const model = new ChatAnthropic({
+  //   model: "claude-3-5-haiku-20241022",
+  //   temperature: 1.0,
+  //   maxRetries: 2,
+  // });
 
   const parser = StructuredOutputParser.fromZodSchema(ArchitectureSchema);
   const formatInstructions = parser.getFormatInstructions();
 
   const prompt = new PromptTemplate({
     template: `${PROMPT.role}
-    ${PROMPT.guide}
+${PROMPT.guide}
 
 0. Constraints: 
 ${PROMPT.constraints.map(c => `- ${c}`).join('\n')}
@@ -54,13 +62,23 @@ IMPORTANT: ${PROMPT.important}
     format_instructions: formatInstructions,
   });
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
+
   try {
     const architecture = await model.pipe(parser).invoke(formattedPrompt, {
-      timeout: 60000,
+      timeout: TIMEOUT,
+      signal: controller.signal,
     });
+
     return { architecture };
   } catch (error) {
+    if (error instanceof Error && error.message === "Aborted") {
+      throw new Error("Request timed out after 60 seconds");
+    }
     console.error("Error during AI visualization:", error);
     throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
