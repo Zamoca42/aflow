@@ -11,9 +11,9 @@ export class GitHubClient {
   private accessToken: string;
   private readonly githubAppName = "repository-tree-viewer";
 
-  constructor(session: Session | null) {
-    this.username = this.getSessionUsername(session);
-    this.accessToken = this.validateAccessToken(session?.accessToken);
+  constructor(session: Session) {
+    this.username = session.user?.username!;
+    this.accessToken = session.accessToken!;
 
     this.client = ky.extend({
       prefixUrl: "https://api.github.com",
@@ -88,19 +88,5 @@ export class GitHubClient {
     }
 
     return TreeStructureSchema.parse(new TreeBuilder(data.tree).build());
-  }
-
-  private validateAccessToken(accessToken: string | undefined): string {
-    if (!accessToken) {
-      throw new Error("Access token is required");
-    }
-    return accessToken;
-  }
-
-  private getSessionUsername(session: Session | null): string {
-    if (!session?.user?.username) {
-      throw new Error("Username is required");
-    }
-    return session.user.username;
   }
 }

@@ -2,7 +2,6 @@ export const MAX_URL_LENGTH = 8200;
 export const APP_TITLE = "GitHub Repo Tree Viewer";
 export const APP_DESCRIPTION = "Visualize your GitHub repos as ASCII trees";
 export const FEEDBACK_EMAIL = "contact@choo.ooo";
-export const GITHUB_REPO_URL = "https://github.com/Zamoca42/repo-tree-viewer";
 export const PROMPT = {
   role: "You are an expert software architect specializing in analyzing codebases and creating detailed architectural diagrams.",
   guide: "Here's a step-by-step guide for analyzing the architecture of a given repository/project.",
