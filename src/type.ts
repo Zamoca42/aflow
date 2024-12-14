@@ -1,11 +1,5 @@
 import { type Session } from "next-auth";
 
-export interface Architecture {
-  title: string;
-  nodes: { title: string; items: string[] }[];
-  flows: string[];
-}
-
 export interface InstallationInfo {
   id: number;
   app_slug: string;

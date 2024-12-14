@@ -17,13 +17,16 @@ export const TreeStructureSchema = z.array(TreeViewElementSchema);
 
 export const NodeSchema = z.object({
   title: z.string().min(1).describe(PROMPT.schemaDescription.nodes.title),
-  items: z.array(z.string().min(1))
-  .min(1)
-  .describe(PROMPT.schemaDescription.nodes.items)
+  items: z.array(z.string()).describe(PROMPT.schemaDescription.nodes.items)
 });
 
 export const ArchitectureSchema = z.object({
   title: z.string().min(1).describe(PROMPT.schemaDescription.title),
-  nodes: z.array(NodeSchema).min(1).describe(PROMPT.schemaDescription.nodes.description),
-  flows: z.array(z.string().min(1)).min(1).describe(PROMPT.schemaDescription.flows)
+  nodes: z.record(NodeSchema).describe(PROMPT.schemaDescription.nodes.description),
+  flows: z.array(z.object({
+    source: z.string(),
+    target: z.string()
+  })).min(1).describe(PROMPT.schemaDescription.flows)
 });
+
+export type Architecture = z.infer<typeof ArchitectureSchema>;

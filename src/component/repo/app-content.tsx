@@ -1,17 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { RepoHeader } from "./header";
-import { RepoContentMenu } from "./content-menu";
-import { VisualizeTab } from "./visualize-tab";
+import { RepoHeader } from "@/component/repo/header";
+import { RepoContentMenu } from "@/component/repo/content-menu";
+import { VisualizeTab } from "@/component/repo/visualize-tab";
 import { TreeView } from "@/component/repo/tree-view";
 import { TreeViewElement } from "@/component/tree-view-api";
-import { Button } from "../ui/button";
+import { Button } from "@/component/ui/button";
 import { Loader2Icon, SparklesIcon } from "lucide-react";
 import { getArchitecture } from "@/action/ai-visualize";
 import { useTreeView } from "@/context/view-filter";
 import { MarkdownTreeGenerator } from "@/action/markdown";
-import { useRouter } from "next/navigation";
 import { convertToMermaid } from "@/lib/mermaid";
 
 interface RepoContentProps {
@@ -23,7 +22,6 @@ export function AppRepoContent({
   repoName,
   structuredRepoTree,
 }: RepoContentProps) {
-  const router = useRouter();
   const [isVisualizerActive, setIsVisualizerActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { showIcons, showFiles } = useTreeView();
@@ -69,7 +67,7 @@ export function AppRepoContent({
             ) : (
               <SparklesIcon />
             )}
-            <span className="text-xs">AI Visualize</span>
+            <span className="text-xs">AI Visualizer</span>
           </Button>
         </div>
       </header>

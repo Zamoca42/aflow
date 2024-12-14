@@ -3,7 +3,6 @@
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { ChatAnthropic } from "@langchain/anthropic";
 import { ArchitectureSchema } from "@/lib/schema";
 import { PROMPT } from "@/lib/constant";
 
@@ -16,14 +15,7 @@ export async function getArchitecture(input: string) {
     model: "gemini-1.5-flash",
     maxRetries: 3,
     temperature: 1.0,
-   
   });
-
-  // const model = new ChatAnthropic({
-  //   model: "claude-3-5-haiku-20241022",
-  //   temperature: 1.0,
-  //   maxRetries: 2,
-  // });
 
   const parser = StructuredOutputParser.fromZodSchema(ArchitectureSchema);
   const formatInstructions = parser.getFormatInstructions();

@@ -6,7 +6,7 @@ export const PROMPT = {
   role: "You are an expert software architect specializing in analyzing codebases and creating detailed architectural diagrams.",
   guide: "Here's a step-by-step guide for analyzing the architecture of a given repository/project.",
   constraints: [
-    "Do not include folders like style, public",
+    "Do not include folders like style, public, UI, packages",
     "No brackets allowed in any text",
     "Component IDs must be unique",
     "flows should focus on minor component dependencies",
@@ -27,7 +27,7 @@ export const PROMPT = {
   },
   examples: {
     components: ["Auth Service", "API Gateway", "User Controller"],
-    flows: ["Auth Service->API Gateway", "User Controller->Auth Service"]
+    flows: ["source: 'Auth Service', target: 'API Gateway'", "source: 'User Controller', target: 'Auth Service'"]
   },
   schemaDescription: {
     title: "The title of the architecture",
