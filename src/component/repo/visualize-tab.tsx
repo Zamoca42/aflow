@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/component/ui/tabs";
-import { vs } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/esm/prism";
 
 interface VisualizeTabProps {
@@ -41,7 +41,7 @@ export function VisualizeTab({ mermaidCode }: VisualizeTabProps) {
           <MermaidViewer code={mermaidCode} activeTab={activeTab} />
         </TabsContent>
         <TabsContent value="code" className="animate-in fade-in duration-300">
-          <SyntaxHighlighter language="mermaid" style={vs} className="text-xs rounded-xl">
+          <SyntaxHighlighter language="mermaid" style={oneLight} className="text-xs rounded-xl bg-sidebar/70">
             {mermaidCode}
           </SyntaxHighlighter>
         </TabsContent>

@@ -9,10 +9,9 @@ import { TreeViewElement } from "@/component/tree-view-api";
 import { Button } from "@/component/ui/button";
 import { Loader2Icon, SparklesIcon } from "lucide-react";
 import { getArchitecture } from "@/action/ai-visualize";
-import { useTreeView } from "@/context/view-filter";
 import { MarkdownTreeGenerator } from "@/action/markdown";
 import { convertToMermaid } from "@/lib/mermaid";
-
+import { useTreeView } from "@/component/repo/tree-view";
 interface RepoContentProps {
   repoName: string;
   structuredRepoTree: TreeViewElement[];
@@ -75,7 +74,7 @@ export function AppRepoContent({
         <div
           className={`rounded-xl transition-all duration-500 px-4 py-2 ${
             isVisualizerActive
-              ? "bg-sidebar/70 min-h-[25vh] active"
+              ? "bg-sidebar/80 min-h-[25vh] active"
               : "bg-transparent h-0 min-h-0 -mt-4"
           }`}
         >
@@ -88,7 +87,7 @@ export function AppRepoContent({
             generation && <VisualizeTab mermaidCode={generation} />
           )}
         </div>
-        <div className="min-h-[50vh] bg-sidebar/70 rounded-xl px-4 py-2">
+        <div className="min-h-[50vh] bg-sidebar/80 rounded-xl px-4 py-2">
           <RepoContentMenu
             structuredRepoTree={structuredRepoTree}
             markdownTree={markdownTree}

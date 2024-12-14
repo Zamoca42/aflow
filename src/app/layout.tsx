@@ -2,9 +2,9 @@ import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/util";
-import { TreeViewProvider } from "@/context/view-filter";
 import { APP_DESCRIPTION, APP_TITLE } from "@/lib/constant";
 import { SidebarInset, SidebarProvider } from "@/component/ui/sidebar";
+import { TreeViewProvider } from "@/component/repo/tree-view";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
