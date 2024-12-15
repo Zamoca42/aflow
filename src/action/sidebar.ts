@@ -1,13 +1,9 @@
-import { auth, signIn } from "@/action/auth";
+import { auth } from "@/action/auth";
 import { GitHubClient } from "@/action/github";
 import { User } from "@/type";
 
 export async function getSidebarData() {
   const session = await auth();
-
-  if (session?.error === "RefreshAccessTokenError") {
-    await signIn("github");
-  }
 
   if (!session) {
     return {

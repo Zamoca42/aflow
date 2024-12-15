@@ -42,27 +42,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
 async function refreshAccessToken(token: unknown) {
   const tokenJWT = token as JWT;
-  const refreshToken = tokenJWT.refreshToken;
+  const refreshToken = tokenJWT.refreshToken as string;
 
   if (!refreshToken) throw new TypeError("Missing refresh_token")
 
   try {
     const response = await fetch("https://github.com/login/oauth/access_token", {
-      headers: {
-        "Content-Type": "application/json",
-      },
       method: "POST",
-      body: JSON.stringify({
-        client_id: process.env.GITHUB_ID,
-        client_secret: process.env.GITHUB_SECRET,
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: process.env.AUTH_GITHUB_ID!,
+        client_secret: process.env.AUTH_GITHUB_SECRET!,
         grant_type: "refresh_token",
         refresh_token: refreshToken,
       }),
     });
 
-    const tokensOrError = await response.json();
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Refresh token failed:', response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-    if (!response.ok) throw tokensOrError;
+    const tokensOrError = await response.json();
 
     const newTokens = tokensOrError as {
       access_token: string
