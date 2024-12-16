@@ -1,4 +1,4 @@
-export const MAX_URL_LENGTH = 8200;
+export const DEFAULT_ZOOM = 1.0;
 export const APP_TITLE = "GitHub Repo Tree Viewer";
 export const APP_DESCRIPTION = "Visualize your GitHub repos as ASCII trees";
 export const FEEDBACK_EMAIL = "contact@choo.ooo";

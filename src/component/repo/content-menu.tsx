@@ -1,6 +1,6 @@
 "use client";
 
-import { copyToClipboard, downloadMarkdown } from "@/lib/share";
+import { copyToClipboard, simulateDownload } from "@/lib/share";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -76,7 +76,11 @@ export function RepoContentMenu({
       alert("No content to download. The tree is empty.");
       return;
     }
-    downloadMarkdown(markdownTree, `${repoName}-tree.md`);
+
+    const blob = new Blob([markdownTree], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    simulateDownload(`${repoName}-tree.md`, url);
+    URL.revokeObjectURL(url);
   };
 
   return (

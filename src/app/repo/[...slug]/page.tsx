@@ -23,10 +23,6 @@ export default async function RepoPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const repoName = slug[1];
 
-  if (session?.error === "RefreshAccessTokenError") {
-    await signIn("github");
-  }
-
   if (!session) {
     redirect("/");
   }

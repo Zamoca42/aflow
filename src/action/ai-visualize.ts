@@ -15,6 +15,15 @@ export async function getArchitecture(input: string) {
     model: "gemini-1.5-flash",
     maxRetries: 3,
     temperature: 1.0,
+    cache: true,
+    callbacks: [
+      {
+        handleLLMEnd: async (output) => {
+          console.log(JSON.stringify(output, null, 2));
+          console.log("API Call End");
+        },
+      },
+    ],
   });
 
   const parser = StructuredOutputParser.fromZodSchema(ArchitectureSchema);
