@@ -1,9 +1,10 @@
-import ky from "ky";
+import ky, { HTTPError } from "ky";
 import { z } from "zod";
 import { Session } from "next-auth";
 import { TreeBuilder } from "@/action/tree";
 import { TreeStructureSchema } from "@/lib/schema";
 import { Repository, GitTreeResponse, InstallationInfo } from "@/type";
+import { signIn } from "@/action/auth";
 
 export class GitHubClient {
   private client: typeof ky;
@@ -20,6 +21,27 @@ export class GitHubClient {
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
       },
+      hooks: {
+        beforeError: [
+          async (error: HTTPError): Promise<HTTPError> => {
+            const { response } = error;
+            if (response?.status === 401) {
+              try {
+                await signIn("github");
+              } catch (refreshError) {
+                window.location.href = '/';
+                return error;
+              }
+            }
+            return error;
+          }
+        ]
+      },
+      retry: {
+        limit: 2,
+        methods: ['get', 'post', 'put', 'delete'],
+        statusCodes: [401, 408, 429, 500, 502, 503, 504]
+      }
     });
   }
 

@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
 import panzoom from "svg-pan-zoom";
-import { DEFAULT_ZOOM } from "@/lib/constant";
 import { Button } from "@/component/ui/button";
 import { MinusIcon, PlusIcon, RefreshCcwIcon } from "lucide-react";
 
+const DEFAULT_ZOOM = 1.0;
 interface MermaidViewerProps {
   code: string;
   activeTab: string;
@@ -38,7 +38,7 @@ export function MermaidViewer({ code, activeTab }: MermaidViewerProps) {
           svgElement.style.maxWidth = "100%";
           svgElement.style.maxHeight = "100%";
           svgElement.style.width = "100%";
-          svgElement.style.height = "25vh";
+          svgElement.style.height = "50vh";
 
           const bbox = svgElement.getBBox();
           if (!svgElement.getAttribute("viewBox")) {
@@ -64,7 +64,7 @@ export function MermaidViewer({ code, activeTab }: MermaidViewerProps) {
             pzoomRef.current?.zoom(DEFAULT_ZOOM);
           }
         }
-      }, 100);
+      }, 50);
 
       return () => {
         pzoomRef.current?.destroy();
@@ -103,7 +103,7 @@ export function MermaidViewer({ code, activeTab }: MermaidViewerProps) {
 
   return (
     <div ref={containerRef} className="relative">
-      <pre className="mermaid min-h-[25vh]">{code}</pre>
+      <pre className="mermaid min-h-[50vh]">{code}</pre>
       <div className="absolute bottom-4 right-4 flex flex-col rounded-lg p-1 shadow-lg backdrop-blur">
         <div className="text-center text-xs text-muted-foreground h-8 w-8 py-2">
           {Math.floor(zoom * 100)}

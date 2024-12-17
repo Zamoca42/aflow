@@ -22,7 +22,7 @@ export const NodeSchema = z.object({
 
 export const ArchitectureSchema = z.object({
   title: z.string().min(1).describe(PROMPT.schemaDescription.title),
-  nodes: z.record(NodeSchema).describe(PROMPT.schemaDescription.nodes.description),
+  nodes: z.array(NodeSchema).describe(PROMPT.schemaDescription.nodes.description),
   flows: z.array(z.object({
     source: z.string(),
     target: z.string()

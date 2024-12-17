@@ -7,7 +7,6 @@ export default async function DefaultSidebar() {
   const { user, allRepos } = await getSidebarData();
 
   if (!user) {
-    await signIn("github");
     redirect("/");
   }
 

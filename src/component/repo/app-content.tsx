@@ -23,6 +23,8 @@ export function AppRepoContent({
 }: RepoContentProps) {
   const [isVisualizerActive, setIsVisualizerActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCached, setIsCached] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const { showIcons, showFiles } = useTreeView();
   const [generation, setGeneration] = useState<string>("");
 
@@ -40,11 +42,22 @@ export function AppRepoContent({
     setIsVisualizerActive(true);
     setIsLoading(true);
     try {
-      const { architecture } = await getArchitecture(markdownTree);
-      const mermaidCode = convertToMermaid(architecture);
-      setGeneration(mermaidCode);
+      const { architecture, isCached, success } = await getArchitecture(
+        markdownTree
+      );
+      if (success) {
+        const mermaidCode = convertToMermaid(architecture);
+        setGeneration(mermaidCode);
+        setIsCached(isCached);
+      } else {
+        alert("Too many requests. Please try again later.");
+        setDisabled(true);
+        setTimeout(() => {
+          setDisabled(false);
+        }, 30000);
+      }
     } catch (error) {
-      alert("Error during AI visualization");
+      alert((error as Error).message ?? "Something went wrong");
       setIsVisualizerActive(false);
     } finally {
       setIsLoading(false);
@@ -60,6 +73,7 @@ export function AppRepoContent({
             variant="outline"
             className="p-2 h-7"
             onClick={handleVisualize}
+            disabled={disabled}
           >
             {isLoading ? (
               <Loader2Icon className="w-4 h-4 animate-spin" />
@@ -74,17 +88,23 @@ export function AppRepoContent({
         <div
           className={`rounded-xl transition-all duration-500 px-4 py-2 ${
             isVisualizerActive
-              ? "bg-sidebar/80 min-h-[25vh] active"
+              ? "bg-sidebar/80 min-h-[50vh] active"
               : "bg-transparent h-0 min-h-0 -mt-4"
           }`}
         >
           {isLoading ? (
-            <div className="flex justify-center items-center w-full min-h-[25vh]">
+            <div className="flex justify-center items-center w-full min-h-[50vh]">
               <Loader2Icon className="w-8 h-8 animate-spin" />
             </div>
           ) : (
             isVisualizerActive &&
-            generation && <VisualizeTab mermaidCode={generation} />
+            generation && (
+              <VisualizeTab
+                mermaidCode={generation}
+                isCached={isCached}
+                repoName={repoName}
+              />
+            )
           )}
         </div>
         <div className="min-h-[50vh] bg-sidebar/80 rounded-xl px-4 py-2">

@@ -6,11 +6,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/component/ui/tabs";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SyntaxHighlighter from "react-syntax-highlighter/dist/esm/prism";
 import { copyToClipboard, simulateDownload } from "@/lib/share";
-import { CheckIcon, ClipboardIcon, ImageDownIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ClipboardIcon,
+  DatabaseZapIcon,
+  ImageDownIcon,
+} from "lucide-react";
 import { Button } from "@/component/ui/button";
+import { AppTooltip } from "@/component/app-tooltip";
 
 interface VisualizeTabProps {
   mermaidCode: string;
+  isCached: boolean;
+  repoName: string;
 }
 
 const MermaidViewer = dynamic(
@@ -21,7 +29,11 @@ const MermaidViewer = dynamic(
   }
 );
 
-export function VisualizeTab({ mermaidCode }: VisualizeTabProps) {
+export function VisualizeTab({
+  mermaidCode,
+  isCached,
+  repoName,
+}: VisualizeTabProps) {
   const [activeTab, setActiveTab] = useState("preview");
   const [isCopied, setIsCopied] = useState(false);
 
@@ -39,10 +51,25 @@ export function VisualizeTab({ mermaidCode }: VisualizeTabProps) {
     }
   };
 
-  const getFileName = (extension: string) => `mermaid-diagram.${extension}`;
-
   const getBase64SVG = (svg: SVGElement): string => {
     const clonedSvg = svg.cloneNode(true) as SVGElement;
+
+    const currentViewBox = clonedSvg
+      .getAttribute("viewBox")
+      ?.split(" ")
+      .map(Number);
+    if (currentViewBox) {
+      const padding = 20;
+
+      const newViewBox = [
+        currentViewBox[0] - padding,
+        currentViewBox[1] - padding,
+        currentViewBox[2] + padding * 2,
+        currentViewBox[3] + padding * 2,
+      ].join(" ");
+
+      clonedSvg.setAttribute("viewBox", newViewBox);
+    }
 
     const svgString = clonedSvg.outerHTML
       .replaceAll("<br>", "<br/>")
@@ -57,7 +84,7 @@ export function VisualizeTab({ mermaidCode }: VisualizeTabProps) {
     if (!svgElement) return;
 
     simulateDownload(
-      getFileName("svg"),
+      `${repoName}-architecture-diagram.svg`,
       `data:image/svg+xml;base64,${getBase64SVG(svgElement)}`
     );
   };
@@ -72,19 +99,30 @@ export function VisualizeTab({ mermaidCode }: VisualizeTabProps) {
         <div className="component-menu">
           <div>
             {activeTab === "preview" ? (
-              <div>
-                <Button variant="ghost" size="icon" onClick={handleSvgDownload}>
-                  <ImageDownIcon />
-                </Button>
+              <div className="flex items-center gap-2">
+                <AppTooltip content="Cached">
+                  {isCached && <DatabaseZapIcon className="w-4 h-4" />}
+                </AppTooltip>
+                <AppTooltip content="Download SVG">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleSvgDownload}
+                  >
+                    <ImageDownIcon />
+                  </Button>
+                </AppTooltip>
               </div>
             ) : (
-              <Button
-                onClick={handleCopyToClipboard}
-                variant="ghost"
-                size="icon"
-              >
-                {isCopied ? <CheckIcon /> : <ClipboardIcon />}
-              </Button>
+              <AppTooltip content="Copy to clipboard">
+                <Button
+                  onClick={handleCopyToClipboard}
+                  variant="ghost"
+                  size="icon"
+                >
+                  {isCopied ? <CheckIcon /> : <ClipboardIcon />}
+                </Button>
+              </AppTooltip>
             )}
           </div>
           <TabsList className="grid grid-cols-2">

@@ -9,8 +9,8 @@ const sanitizeId = (str: string): string => {
 export function convertToMermaid(architecture: Architecture): string {
   const mermaidCode = [`flowchart TD`];
 
-  Object.entries(architecture.nodes).forEach(([groupId, node]) => {
-    const sanitizedGroupId = sanitizeId(groupId);
+  architecture.nodes.forEach((node) => {
+    const sanitizedGroupId = sanitizeId(node.title);
 
     mermaidCode.push(`  subgraph ${sanitizedGroupId}["${node.title}"]`);
     node.items.forEach((item) => {
