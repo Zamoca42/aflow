@@ -15,6 +15,7 @@ import { VisualizeTab } from "@/component/repo/visualize-tab";
 import { Architecture } from "@/lib/schema";
 import { useRateLimit } from "@/component/rate-limit";
 import { RATE_LIMIT_DURATION } from "@/lib/constant";
+import { UpstashRatelimitError } from "@langchain/community/callbacks/handlers/upstash_ratelimit";
 
 interface RepoContentProps {
   repoName: string;
@@ -51,21 +52,24 @@ export function AppRepoContent({
       );
 
       if (!success) {
-        setRateLimited(RATE_LIMIT_DURATION);
         throw new Error("429");
       }
 
       if (architecture) {
-        const mermaidCode = convertToMermaid(architecture as Architecture);
+        const mermaidCode = convertToMermaid(architecture);
         setGeneration(mermaidCode);
         setIsCached(isCached);
       }
     } catch (error) {
-      alert(
+      if (
+        error instanceof UpstashRatelimitError ||
         (error as Error).message === "429"
-          ? `Too many requests. Please wait ${RATE_LIMIT_DURATION} seconds.`
-          : "Something went wrong!"
-      );
+      ) {
+        alert(`Too many requests. Please wait ${RATE_LIMIT_DURATION} seconds.`);
+        setRateLimited(RATE_LIMIT_DURATION);
+      } else {
+        alert("Something went wrong!");
+      }
       setIsVisualizerActive(false);
     } finally {
       setIsLoading(false);

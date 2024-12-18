@@ -3,7 +3,7 @@
 import { PromptTemplate } from "@langchain/core/prompts";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { ArchitectureSchema } from "@/lib/schema";
+import { Architecture, ArchitectureSchema } from "@/lib/schema";
 import { UpstashRedisCache } from "@/lib/upstash-redis";
 import {
   UpstashRatelimitHandler,
@@ -29,7 +29,11 @@ const requestRatelimit = new Ratelimit({
   limiter: Ratelimit.fixedWindow(RATE_LIMIT_TOKEN, `${RATE_LIMIT_DURATION} s`),
 });
 
-export async function getArchitecture(input: string) {
+export async function getArchitecture(input: string): Promise<{
+  architecture: Architecture | null;
+  isCached: boolean;
+  success: boolean;
+}> {
   "use server";
 
   const controller = new AbortController();
@@ -92,12 +96,6 @@ IMPORTANT: ${PROMPT.important}
       streamUsage: true,
     });
 
-    const { success } = await requestRatelimit.limit(userId);
-
-    if (!success) {
-      throw new UpstashRatelimitError("Request rate limit exceeded", "request");
-    }
-
     const ratelimitHandler = new UpstashRatelimitHandler(userId, {
       requestRatelimit,
     });
@@ -117,14 +115,17 @@ IMPORTANT: ${PROMPT.important}
       ],
     });
 
-    return { architecture, isCached, success };
+    return { architecture, isCached, success: true };
   } catch (error) {
     if (error instanceof Error && error.message === "Aborted") {
       throw new Error("Request timed out after 60 seconds");
     }
 
-    if (error instanceof UpstashRatelimitError) {
-      return { success: false };
+    if (
+      error instanceof UpstashRatelimitError ||
+      (error as Error).message.includes("Request limit reached")
+    ) {
+      return { architecture: null, isCached: false, success: false };
     }
 
     throw error;
