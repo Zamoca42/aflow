@@ -100,6 +100,12 @@ IMPORTANT: ${PROMPT.important}
       requestRatelimit,
     });
 
+    const { success } = await requestRatelimit.limit(userId);
+
+    if (!success) {
+      throw new UpstashRatelimitError("Request rate limit exceeded", "request");
+    }
+
     let isCached = false;
 
     const architecture = await model.pipe(parser).invoke(formattedPrompt, {
@@ -115,7 +121,7 @@ IMPORTANT: ${PROMPT.important}
       ],
     });
 
-    return { architecture, isCached, success: true };
+    return { architecture, isCached, success };
   } catch (error) {
     if (error instanceof Error && error.message === "Aborted") {
       throw new Error("Request timed out after 60 seconds");

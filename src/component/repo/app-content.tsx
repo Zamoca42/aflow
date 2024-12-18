@@ -63,7 +63,8 @@ export function AppRepoContent({
     } catch (error) {
       if (
         error instanceof UpstashRatelimitError ||
-        (error as Error).message === "429"
+        (error as Error).message === "429" ||
+        (error as Error).message.includes("Request limit reached")
       ) {
         alert(`Too many requests. Please wait ${RATE_LIMIT_DURATION} seconds.`);
         setRateLimited(RATE_LIMIT_DURATION);
