@@ -109,6 +109,16 @@ IMPORTANT: ${PROMPT.important}
           isCached = !output.llmOutput;
         },
       },
+      {
+        handleChainError: (error) => {
+          console.error(error);
+        },
+      },
+      {
+        handleLLMError: (error) => {
+          console.error(error);
+        },
+      },
       ratelimitHandler,
     ],
   });

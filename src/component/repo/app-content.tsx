@@ -58,7 +58,6 @@ export function AppRepoContent({
         setRateLimited(RATE_LIMIT_DURATION);
       } else {
         alert("Something went wrong!");
-        console.error(error);
       }
       setIsVisualizerActive(false);
     } finally {
