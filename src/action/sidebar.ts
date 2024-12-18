@@ -1,16 +1,8 @@
-import { auth, signIn } from "@/action/auth";
 import { GitHubClient } from "@/action/github";
 import { User } from "@/type";
-import { redirect } from "next/navigation";
+import { type Session } from "next-auth";
 
-export async function getSidebarData() {
-  const session = await auth();
-
-  if (!session || session.error === "RefreshAccessTokenError") {
-    await signIn("github");
-    redirect("/");
-  }
-
+export async function getSidebarData(session: Session) {
   const user: User = {
     name: session.user.name!,
     email: session.user.email!,

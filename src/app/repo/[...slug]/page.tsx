@@ -1,4 +1,4 @@
-import { auth, signIn } from "@/action/auth";
+import { auth } from "@/action/auth";
 import { GitHubClient } from "@/action/github";
 import { AppRepoContent } from "@/component/repo/app-content";
 import { redirect } from "next/navigation";
@@ -23,7 +23,7 @@ export default async function RepoPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
   const repoName = slug[1];
 
-  if (!session) {
+  if (!session || session.error === "RefreshAccessTokenError") {
     redirect("/");
   }
 
