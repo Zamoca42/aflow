@@ -45,7 +45,13 @@ export function AppRepoContent({
     setIsVisualizerActive(true);
     setIsLoading(true);
     try {
-      const { architecture, isCached } = await getArchitecture(markdownTree);
+      const { architecture, isCached, success } = await getArchitecture(
+        markdownTree
+      );
+
+      if (!success) {
+        throw new Error("429");
+      }
 
       if (architecture) {
         const mermaidCode = convertToMermaid(architecture);

@@ -80,48 +80,37 @@ IMPORTANT: ${PROMPT.important}
     return { architecture: null, isCached: false, success: false };
   }
 
-  const model = new ChatGoogleGenerativeAI({
-    model: "gemini-1.5-flash",
-    maxRetries: 3,
-    temperature: 1.0,
-    cache,
-    streaming: true,
-    streamUsage: true,
-  });
-
   const ratelimitHandler = new UpstashRatelimitHandler(userId, {
     requestRatelimit,
   });
 
-  // const { success } = await requestRatelimit.limit(userId);
-
-  // if (!success) {
-  //   return { architecture: null, isCached: false, success: false };
-  // }
-
   let isCached = false;
+  const { success } = await requestRatelimit.limit(userId);
 
-  const architecture = await model.pipe(parser).invoke(formattedPrompt, {
-    timeout: TIMEOUT,
-    callbacks: [
-      {
-        handleLLMEnd: (output) => {
-          isCached = !output.llmOutput;
-        },
-      },
-      {
-        handleChainError: (error) => {
-          console.error(error);
-        },
-      },
-      {
-        handleLLMError: (error) => {
-          console.error(error);
-        },
-      },
-      ratelimitHandler,
-    ],
-  });
+  if (!success) {
+    return { architecture: null, isCached, success };
+  } else {
+    const model = new ChatGoogleGenerativeAI({
+      model: "gemini-1.5-flash",
+      maxRetries: 3,
+      temperature: 1.0,
+      cache,
+      streaming: true,
+      streamUsage: true,
+      callbacks: [ratelimitHandler],
+    });
 
-  return { architecture, isCached, success: true };
+    const architecture = await model.pipe(parser).invoke(formattedPrompt, {
+      timeout: TIMEOUT,
+      callbacks: [
+        {
+          handleLLMEnd: (output) => {
+            isCached = !output.llmOutput;
+          },
+        },
+      ],
+    });
+
+    return { architecture, isCached, success };
+  }
 }
