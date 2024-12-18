@@ -5,10 +5,7 @@ import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { Architecture, ArchitectureSchema } from "@/lib/schema";
 import { UpstashRedisCache } from "@/lib/upstash-redis";
-import {
-  UpstashRatelimitHandler,
-  UpstashRatelimitError,
-} from "@langchain/community/callbacks/handlers/upstash_ratelimit";
+import { UpstashRatelimitHandler } from "@langchain/community/callbacks/handlers/upstash_ratelimit";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 import { PROMPT, RATE_LIMIT_DURATION } from "@/lib/constant";
@@ -35,9 +32,6 @@ export async function getArchitecture(input: string): Promise<{
   success: boolean;
 }> {
   "use server";
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
 
   const parser = StructuredOutputParser.fromZodSchema(ArchitectureSchema);
   const formatInstructions = parser.getFormatInstructions();
@@ -79,63 +73,45 @@ IMPORTANT: ${PROMPT.important}
     ttl: process.env.NODE_ENV === "production" ? CACHE_TTL : DEV_CACHE_TTL,
   });
 
-  try {
-    const session = await auth();
-    const userId = session?.user?.username;
+  const session = await auth();
+  const userId = session?.user?.username;
 
-    if (!userId) {
-      throw new UpstashRatelimitError("User not found", "request");
-    }
-
-    const model = new ChatGoogleGenerativeAI({
-      model: "gemini-1.5-flash",
-      maxRetries: 3,
-      temperature: 1.0,
-      cache,
-      streaming: true,
-      streamUsage: true,
-    });
-
-    const ratelimitHandler = new UpstashRatelimitHandler(userId, {
-      requestRatelimit,
-    });
-
-    const { success } = await requestRatelimit.limit(userId);
-
-    if (!success) {
-      throw new UpstashRatelimitError("Request rate limit exceeded", "request");
-    }
-
-    let isCached = false;
-
-    const architecture = await model.pipe(parser).invoke(formattedPrompt, {
-      timeout: TIMEOUT,
-      signal: controller.signal,
-      callbacks: [
-        {
-          handleLLMEnd: (output) => {
-            isCached = !output.llmOutput;
-          },
-        },
-        ratelimitHandler,
-      ],
-    });
-
-    return { architecture, isCached, success };
-  } catch (error) {
-    if (error instanceof Error && error.message === "Aborted") {
-      throw new Error("Request timed out after 60 seconds");
-    }
-
-    if (
-      error instanceof UpstashRatelimitError ||
-      (error as Error).message.includes("Request limit reached")
-    ) {
-      return { architecture: null, isCached: false, success: false };
-    }
-
-    throw error;
-  } finally {
-    clearTimeout(timeoutId);
+  if (!userId) {
+    return { architecture: null, isCached: false, success: false };
   }
+
+  const model = new ChatGoogleGenerativeAI({
+    model: "gemini-1.5-flash",
+    maxRetries: 3,
+    temperature: 1.0,
+    cache,
+    streaming: true,
+    streamUsage: true,
+  });
+
+  const ratelimitHandler = new UpstashRatelimitHandler(userId, {
+    requestRatelimit,
+  });
+
+  const { success } = await requestRatelimit.limit(userId);
+
+  if (!success) {
+    return { architecture: null, isCached: false, success: false };
+  }
+
+  let isCached = false;
+
+  const architecture = await model.pipe(parser).invoke(formattedPrompt, {
+    timeout: TIMEOUT,
+    callbacks: [
+      {
+        handleLLMEnd: (output) => {
+          isCached = !output.llmOutput;
+        },
+      },
+      ratelimitHandler,
+    ],
+  });
+
+  return { architecture, isCached, success };
 }

@@ -61,15 +61,12 @@ export function AppRepoContent({
         setIsCached(isCached);
       }
     } catch (error) {
-      if (
-        error instanceof UpstashRatelimitError ||
-        (error as Error).message === "429" ||
-        (error as Error).message.includes("Request limit reached")
-      ) {
+      if ((error as Error).message === "429") {
         alert(`Too many requests. Please wait ${RATE_LIMIT_DURATION} seconds.`);
         setRateLimited(RATE_LIMIT_DURATION);
       } else {
         alert("Something went wrong!");
+        console.error(error);
       }
       setIsVisualizerActive(false);
     } finally {
