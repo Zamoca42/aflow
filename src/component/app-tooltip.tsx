@@ -6,15 +6,18 @@ import {
 } from "@/component/ui/tooltip";
 
 interface AppTooltipProps {
-  content: React.ReactNode;
+  content: string;
   children: React.ReactNode;
+  asChild?: boolean;
 }
 
-export function AppTooltip({ content, children }: AppTooltipProps) {
+export function AppTooltip({ content, children, asChild }: AppTooltipProps) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipTrigger asChild={asChild}>
+          {children}
+        </TooltipTrigger>
         <TooltipContent>
           <p>{content}</p>
         </TooltipContent>

@@ -58,17 +58,14 @@ export function RepoContentMenu({
       alert("No content to copy. The tree is empty.");
       return;
     }
-    try {
-      await copyToClipboard(
-        process.env.NODE_ENV === "development"
-          ? JSON.stringify(structuredRepoTree, null, 2)
-          : markdownTree
-      );
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+
+    await copyToClipboard(
+      process.env.NODE_ENV === "development"
+        ? JSON.stringify(structuredRepoTree, null, 2)
+        : markdownTree
+    );
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const handleDownloadMarkdown = () => {

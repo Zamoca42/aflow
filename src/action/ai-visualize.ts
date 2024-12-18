@@ -11,12 +11,23 @@ import {
 } from "@langchain/community/callbacks/handlers/upstash_ratelimit";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { PROMPT } from "@/lib/constant";
+import { PROMPT, RATE_LIMIT_DURATION } from "@/lib/constant";
 import { auth } from "@/action/auth";
 
 const TIMEOUT = 60000;
-const CACHE_TTL = 60 * 60 * 24;
+const CACHE_TTL = 60 * 60 * 12;
 const DEV_CACHE_TTL = 60 * 5;
+const RATE_LIMIT_TOKEN = 3;
+
+const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
+
+const requestRatelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.fixedWindow(RATE_LIMIT_TOKEN, `${RATE_LIMIT_DURATION} s`),
+});
 
 export async function getArchitecture(input: string) {
   "use server";
@@ -24,44 +35,10 @@ export async function getArchitecture(input: string) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
 
-  try {
-
-    const session = await auth();
-    const userId = session?.user?.username;
-
-    if (!userId) {
-      throw new UpstashRatelimitError("User not found", "request");
-    }
-
-    const redis = new Redis({
-      url: process.env.KV_REST_API_URL,
-      token: process.env.KV_REST_API_TOKEN,
-    });
-
-    const requestRatelimit = new Ratelimit({
-      redis,
-      limiter: Ratelimit.fixedWindow(1, "30 s"),
-    });
-
-    const cache = new UpstashRedisCache({
-      client: redis,
-      ttl: process.env.NODE_ENV === "production" ? CACHE_TTL : DEV_CACHE_TTL,
-    });
-
-    const model = new ChatGoogleGenerativeAI({
-      model: "gemini-1.5-flash",
-      maxRetries: 3,
-      temperature: 1.0,
-      cache,
-      streaming: true,
-      streamUsage: true,
-    });
-
-    const parser = StructuredOutputParser.fromZodSchema(ArchitectureSchema);
-    const formatInstructions = parser.getFormatInstructions();
-
-    const prompt = new PromptTemplate({
-      template: `${PROMPT.role}
+  const parser = StructuredOutputParser.fromZodSchema(ArchitectureSchema);
+  const formatInstructions = parser.getFormatInstructions();
+  const prompt = new PromptTemplate({
+    template: `${PROMPT.role}
 ${PROMPT.guide}
 
 0. Constraints: 
@@ -74,9 +51,9 @@ ${PROMPT.guidelines.map(g => `- ${g}`).join('\n')}
 - title: ${PROMPT.rules.title}
 - nodes: ${PROMPT.rules.nodes}
 - items: ${PROMPT.rules.items}
-  Example: ${PROMPT.examples.components.join(', ')}
+Example: ${PROMPT.examples.components.join(', ')}
 - flows: ${PROMPT.rules.flows}
-  Example: ${PROMPT.examples.flows.join(', ')}
+Example: ${PROMPT.examples.flows.join(', ')}
 
 Project Description:
 {input}
@@ -86,24 +63,46 @@ Format Instructions:
 
 IMPORTANT: ${PROMPT.important}
 `,
-      inputVariables: ["input", "format_instructions"],
+    inputVariables: ["input", "format_instructions"],
+  });
+  const formattedPrompt = await prompt.format({
+    input,
+    format_instructions: formatInstructions,
+  });
+
+  const cache = new UpstashRedisCache({
+    client: redis,
+    ttl: process.env.NODE_ENV === "production" ? CACHE_TTL : DEV_CACHE_TTL,
+  });
+
+  try {
+    const session = await auth();
+    const userId = session?.user?.username;
+
+    if (!userId) {
+      throw new UpstashRatelimitError("User not found", "request");
+    }
+
+    const model = new ChatGoogleGenerativeAI({
+      model: "gemini-1.5-flash",
+      maxRetries: 3,
+      temperature: 1.0,
+      cache,
+      streaming: true,
+      streamUsage: true,
     });
 
-    const formattedPrompt = await prompt.format({
-      input,
-      format_instructions: formatInstructions,
-    });
+    const { success } = await requestRatelimit.limit(userId);
 
-    let isCached = false;
+    if (!success) {
+      throw new UpstashRatelimitError("Request rate limit exceeded", "request");
+    }
 
     const ratelimitHandler = new UpstashRatelimitHandler(userId, {
       requestRatelimit,
     });
 
-    const { success } = await requestRatelimit.limit(userId);
-    if (!success) {
-      return { architecture: null, isCached: true, success };
-    }
+    let isCached = false;
 
     const architecture = await model.pipe(parser).invoke(formattedPrompt, {
       timeout: TIMEOUT,
@@ -118,11 +117,14 @@ IMPORTANT: ${PROMPT.important}
       ],
     });
 
-
     return { architecture, isCached, success };
   } catch (error) {
     if (error instanceof Error && error.message === "Aborted") {
       throw new Error("Request timed out after 60 seconds");
+    }
+
+    if (error instanceof UpstashRatelimitError) {
+      return { success: false };
     }
 
     throw error;

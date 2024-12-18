@@ -1,4 +1,5 @@
 export const APP_TITLE = "GitHub Repo Tree Viewer";
+export const RATE_LIMIT_DURATION = 90;
 export const APP_DESCRIPTION = "Visualize your GitHub repos as ASCII trees";
 export const PROMPT = {
   role: "You are an expert software architect specializing in analyzing codebases and creating detailed architectural diagrams.",

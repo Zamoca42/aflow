@@ -3,7 +3,6 @@
 import { ErrorMessage } from "@/component/message";
 import { ErrorMessageProps } from "@/type";
 import { useEffect } from "react";
-import { RepoError } from "@/lib/error";
 
 export default function Error({
   error,
@@ -17,14 +16,9 @@ export default function Error({
   }, [error]);
 
   const errorProps: ErrorMessageProps = {
-    title: error instanceof RepoError ? error.title : "Something went wrong!",
+    title: "Something went wrong!",
     message: error.message || "An unexpected error occurred.",
-    action:
-      error instanceof RepoError && error.action ? (
-        error.action
-      ) : (
-        <button onClick={reset}>Try again</button>
-      ),
+    action: <button onClick={reset}>Try again</button>,
   };
 
   return <ErrorMessage {...errorProps} />;

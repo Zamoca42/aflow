@@ -39,16 +39,13 @@ export function VisualizeTab({
 
   const handleCopyToClipboard = async () => {
     if (!mermaidCode) {
-      alert("No content to copy. The tree is empty.");
+      alert("No content to copy. The code is empty.");
       return;
     }
-    try {
-      await copyToClipboard(mermaidCode);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+
+    await copyToClipboard(mermaidCode);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   const getBase64SVG = (svg: SVGElement): string => {
@@ -103,7 +100,7 @@ export function VisualizeTab({
                 <AppTooltip content="Cached">
                   {isCached && <DatabaseZapIcon className="w-4 h-4" />}
                 </AppTooltip>
-                <AppTooltip content="Download SVG">
+                <AppTooltip content="Download SVG" asChild>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -114,7 +111,7 @@ export function VisualizeTab({
                 </AppTooltip>
               </div>
             ) : (
-              <AppTooltip content="Copy to clipboard">
+              <AppTooltip content="Copy to clipboard" asChild>
                 <Button
                   onClick={handleCopyToClipboard}
                   variant="ghost"

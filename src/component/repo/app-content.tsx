@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { RepoHeader } from "@/component/repo/header";
 import { RepoContentMenu } from "@/component/repo/content-menu";
-import { VisualizeTab } from "@/component/repo/visualize-tab";
 import { TreeView } from "@/component/repo/tree-view";
 import { TreeViewElement } from "@/component/tree-view-api";
 import { Button } from "@/component/ui/button";
@@ -12,6 +11,11 @@ import { getArchitecture } from "@/action/ai-visualize";
 import { MarkdownTreeGenerator } from "@/action/markdown";
 import { convertToMermaid } from "@/lib/mermaid";
 import { useTreeView } from "@/component/repo/tree-view";
+import { VisualizeTab } from "@/component/repo/visualize-tab";
+import { Architecture } from "@/lib/schema";
+import { useRateLimit } from "@/component/rate-limit";
+import { RATE_LIMIT_DURATION } from "@/lib/constant";
+
 interface RepoContentProps {
   repoName: string;
   structuredRepoTree: TreeViewElement[];
@@ -24,9 +28,9 @@ export function AppRepoContent({
   const [isVisualizerActive, setIsVisualizerActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCached, setIsCached] = useState(false);
-  const [disabled, setDisabled] = useState(false);
   const { showIcons, showFiles } = useTreeView();
   const [generation, setGeneration] = useState<string>("");
+  const { isDisabled, setRateLimited, remainingTime } = useRateLimit();
 
   const markdownTree = useMemo(
     () =>
@@ -45,19 +49,23 @@ export function AppRepoContent({
       const { architecture, isCached, success } = await getArchitecture(
         markdownTree
       );
-      if (success) {
-        const mermaidCode = convertToMermaid(architecture);
+
+      if (!success) {
+        setRateLimited(RATE_LIMIT_DURATION);
+        throw new Error("429");
+      }
+
+      if (architecture) {
+        const mermaidCode = convertToMermaid(architecture as Architecture);
         setGeneration(mermaidCode);
         setIsCached(isCached);
-      } else {
-        alert("Too many requests. Please try again later.");
-        setDisabled(true);
-        setTimeout(() => {
-          setDisabled(false);
-        }, 30000);
       }
     } catch (error) {
-      alert((error as Error).message ?? "Something went wrong");
+      alert(
+        (error as Error).message === "429"
+          ? `Too many requests. Please wait ${RATE_LIMIT_DURATION} seconds.`
+          : "Something went wrong!"
+      );
       setIsVisualizerActive(false);
     } finally {
       setIsLoading(false);
@@ -73,14 +81,16 @@ export function AppRepoContent({
             variant="outline"
             className="p-2 h-7"
             onClick={handleVisualize}
-            disabled={disabled}
+            disabled={isLoading || isDisabled}
           >
             {isLoading ? (
               <Loader2Icon className="w-4 h-4 animate-spin" />
             ) : (
               <SparklesIcon />
             )}
-            <span className="text-xs">AI Visualizer</span>
+            <span className="text-xs">
+              {isDisabled ? `Wait ${remainingTime}s` : "AI Visualizer"}
+            </span>
           </Button>
         </div>
       </header>

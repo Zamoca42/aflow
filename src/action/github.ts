@@ -25,13 +25,8 @@ export class GitHubClient {
         beforeError: [
           async (error: HTTPError): Promise<HTTPError> => {
             const { response } = error;
-            if (response?.status === 401) {
-              try {
-                await signIn("github");
-              } catch (refreshError) {
-                window.location.href = '/';
-                return error;
-              }
+            if (response?.status === 401 || session.error === "RefreshAccessTokenError") {
+              await signIn("github");
             }
             return error;
           }
@@ -66,6 +61,8 @@ export class GitHubClient {
 
   async getPublicRepoCount(): Promise<number> {
     try {
+      if (!this.accessToken) return 0;
+
       const user = await this.client.get('user').json<{
         public_repos: number;
       }>();

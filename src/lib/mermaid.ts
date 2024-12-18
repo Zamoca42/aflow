@@ -1,29 +1,47 @@
 import { Architecture } from "@/lib/schema";
 
-const sanitizeId = (str: string): string => {
-  return str
-    .replace(/\s+/g, '') // 공백 제거
-    .replace(/[^a-zA-Z0-9]/g, ''); // 특수문자 제거
+const createSanitizedIdCache = () => {
+  const idMap = new Map<string, string>();
+
+  return (str: string): string => {
+    if (idMap.has(str)) {
+      return idMap.get(str)!;
+    }
+
+    const newId = str
+      .replace(/\s+/g, '')
+      .replace(/[^a-zA-Z0-9]/g, '');
+
+    idMap.set(str, newId);
+    return newId;
+  };
 };
 
 export function convertToMermaid(architecture: Architecture): string {
-  const mermaidCode = [`flowchart TD`];
+  const generateCacheId = createSanitizedIdCache();
+  const mermaidCode: string[] = [`flowchart TD`];
 
   architecture.nodes.forEach((node) => {
-    const sanitizedGroupId = sanitizeId(node.title);
+    const nodeId = generateCacheId(node.title);
+    mermaidCode.push(`  subgraph ${nodeId}["${node.title}"]`);
 
-    mermaidCode.push(`  subgraph ${sanitizedGroupId}["${node.title}"]`);
-    node.items.forEach((item) => {
-      mermaidCode.push(`    ${sanitizeId(item)}["${item}"]`);
+    node.items.forEach(item => {
+      const itemId = generateCacheId(item);
+      if (itemId !== nodeId) {
+        mermaidCode.push(`    ${itemId}["${item}"]`);
+      }
     });
+
     mermaidCode.push("  end\n");
   });
 
   architecture.flows.forEach(({ source, target }) => {
-    const sanitizedSource = sanitizeId(source);
-    const sanitizedTarget = sanitizeId(target);
-    mermaidCode.push(`  ${sanitizedSource} --> ${sanitizedTarget}`);
-  })
+    const sourceId = generateCacheId(source);
+    const targetId = generateCacheId(target);
+    if (sourceId !== targetId) {
+      mermaidCode.push(`  ${sourceId} --> ${targetId}`);
+    }
+  });
 
   return mermaidCode.join("\n");
 }
