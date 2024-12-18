@@ -1,1 +1,3 @@
-export { auth as middleware } from "@/lib/auth";
+import { auth as middleware } from "@/action/auth";
+
+export default middleware;

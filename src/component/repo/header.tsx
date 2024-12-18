@@ -22,7 +22,7 @@ export function RepoHeader() {
   }, [pathname]);
 
   return (
-    <div className="flex flex-1 items-center gap-2 px-4">
+    <>
       <SidebarTrigger />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumb>
@@ -46,6 +46,6 @@ export function RepoHeader() {
           })}
         </BreadcrumbList>
       </Breadcrumb>
-    </div>
+    </>
   );
 }

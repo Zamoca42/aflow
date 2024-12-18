@@ -2,7 +2,6 @@
 
 import {
   BookOpen,
-  LogIn,
   BookCopy,
   FolderTree,
   BookLock,
@@ -27,7 +26,8 @@ import { NavMenus } from "@/component/sidebar/nav-menus";
 import { NavUser } from "@/component/sidebar/nav-user";
 import { signIn } from "next-auth/react";
 import { GitHubIcon } from "@/component/icon";
-import { FEEDBACK_EMAIL, GITHUB_REPO_URL } from "@/lib/constant";
+
+const FEEDBACK_EMAIL = "contact@choo.ooo";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: User | null;
@@ -95,11 +95,6 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
         url: `mailto:${FEEDBACK_EMAIL}`,
         icon: Send,
       },
-      {
-        title: "View on GitHub",
-        url: GITHUB_REPO_URL,
-        icon: GitHubIcon,
-      },
       user && {
         title: "Manage Private Repository",
         url: `/api/manage-private-repo`,
@@ -136,9 +131,12 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
         {user ? (
           <NavUser user={user} />
         ) : (
-          <SidebarMenuButton onClick={() => signIn("github")}>
+          <SidebarMenuButton
+            onClick={() => signIn("github")}
+            className="flex items-center justify-start"
+          >
             <span>Sign in with GitHub</span>
-            <LogIn />
+            <GitHubIcon />
           </SidebarMenuButton>
         )}
       </SidebarFooter>

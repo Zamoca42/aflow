@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { GitHubClient } from "@/lib/github";
+import { auth } from "@/action/auth";
+import { GitHubClient } from "@/action/github";
 
 export async function GET() {
   try {

@@ -1,10 +1,11 @@
+import "@/app/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "@/app/globals.css";
 import { cn } from "@/lib/util";
-import { TreeViewProvider } from "@/context/view-filter";
 import { APP_DESCRIPTION, APP_TITLE } from "@/lib/constant";
 import { SidebarInset, SidebarProvider } from "@/component/ui/sidebar";
+import { TreeViewProvider } from "@/component/repo/tree-view";
+import { RateLimitProvider } from "@/component/rate-limit";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -50,19 +51,18 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
       </head>
       <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          inter.variable
-        )}
+        className={cn("min-h-screen font-sans antialiased", inter.variable)}
       >
         <TreeViewProvider>
           <SidebarProvider>
-            <aside>{sidebar}</aside>
-            <SidebarInset>
-              <main className="flex-1 overflow-x-hidden overflow-y-auto">
-                {children}
-              </main>
-            </SidebarInset>
+            <RateLimitProvider>
+              <aside>{sidebar}</aside>
+              <SidebarInset>
+                <main className="flex-1 overflow-x-hidden overflow-y-auto">
+                  {children}
+                </main>
+              </SidebarInset>
+            </RateLimitProvider>
           </SidebarProvider>
         </TreeViewProvider>
       </body>

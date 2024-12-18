@@ -1,10 +1,10 @@
-import ky from "ky";
+import ky, { HTTPError } from "ky";
 import { z } from "zod";
 import { Session } from "next-auth";
-import { TreeBuilder } from "@/lib/tree";
+import { TreeBuilder } from "@/action/tree";
 import { TreeStructureSchema } from "@/lib/schema";
 import { Repository, GitTreeResponse, InstallationInfo } from "@/type";
-import { redirect } from "next/navigation";
+import { signIn } from "@/action/auth";
 
 export class GitHubClient {
   private client: typeof ky;
@@ -12,15 +12,31 @@ export class GitHubClient {
   private accessToken: string;
   private readonly githubAppName = "repository-tree-viewer";
 
-  constructor(session: Session | null) {
-    this.username = this.getSessionUsername(session);
-    this.accessToken = this.validateAccessToken(session?.accessToken);
+  constructor(session: Session) {
+    this.username = session.user?.username!;
+    this.accessToken = session.accessToken!;
 
     this.client = ky.extend({
       prefixUrl: "https://api.github.com",
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
       },
+      hooks: {
+        beforeError: [
+          async (error: HTTPError): Promise<HTTPError> => {
+            const { response } = error;
+            if (response?.status === 401 || session.error === "RefreshAccessTokenError") {
+              await signIn("github");
+            }
+            return error;
+          }
+        ]
+      },
+      retry: {
+        limit: 2,
+        methods: ['get', 'post', 'put', 'delete'],
+        statusCodes: [401, 408, 429, 500, 502, 503, 504]
+      }
     });
   }
 
@@ -45,6 +61,8 @@ export class GitHubClient {
 
   async getPublicRepoCount(): Promise<number> {
     try {
+      if (!this.accessToken) return 0;
+
       const user = await this.client.get('user').json<{
         public_repos: number;
       }>();
@@ -89,19 +107,5 @@ export class GitHubClient {
     }
 
     return TreeStructureSchema.parse(new TreeBuilder(data.tree).build());
-  }
-
-  private validateAccessToken(accessToken: string | undefined): string {
-    if (!accessToken) {
-      throw new Error("Access token is required");
-    }
-    return accessToken;
-  }
-
-  private getSessionUsername(session: Session | null): string {
-    if (!session?.user?.username) {
-      throw new Error("Username is required");
-    }
-    return session.user.username;
   }
 }
