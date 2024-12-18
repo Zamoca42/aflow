@@ -93,11 +93,11 @@ IMPORTANT: ${PROMPT.important}
     requestRatelimit,
   });
 
-  const { success } = await requestRatelimit.limit(userId);
+  // const { success } = await requestRatelimit.limit(userId);
 
-  if (!success) {
-    return { architecture: null, isCached: false, success: false };
-  }
+  // if (!success) {
+  //   return { architecture: null, isCached: false, success: false };
+  // }
 
   let isCached = false;
 
@@ -113,5 +113,5 @@ IMPORTANT: ${PROMPT.important}
     ],
   });
 
-  return { architecture, isCached, success };
+  return { architecture, isCached, success: true };
 }

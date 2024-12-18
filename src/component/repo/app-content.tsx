@@ -12,10 +12,8 @@ import { MarkdownTreeGenerator } from "@/action/markdown";
 import { convertToMermaid } from "@/lib/mermaid";
 import { useTreeView } from "@/component/repo/tree-view";
 import { VisualizeTab } from "@/component/repo/visualize-tab";
-import { Architecture } from "@/lib/schema";
 import { useRateLimit } from "@/component/rate-limit";
 import { RATE_LIMIT_DURATION } from "@/lib/constant";
-import { UpstashRatelimitError } from "@langchain/community/callbacks/handlers/upstash_ratelimit";
 
 interface RepoContentProps {
   repoName: string;
@@ -47,13 +45,7 @@ export function AppRepoContent({
     setIsVisualizerActive(true);
     setIsLoading(true);
     try {
-      const { architecture, isCached, success } = await getArchitecture(
-        markdownTree
-      );
-
-      if (!success) {
-        throw new Error("429");
-      }
+      const { architecture, isCached } = await getArchitecture(markdownTree);
 
       if (architecture) {
         const mermaidCode = convertToMermaid(architecture);
