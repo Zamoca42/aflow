@@ -3,10 +3,10 @@
 import {
   BookOpen,
   BookCopy,
-  FolderTree,
   BookLock,
   Send,
   Settings,
+  Coffee,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -25,7 +25,8 @@ import { NavRepository } from "@/component/sidebar/nav-repository";
 import { NavMenus } from "@/component/sidebar/nav-menus";
 import { NavUser } from "@/component/sidebar/nav-user";
 import { signIn } from "next-auth/react";
-import { GitHubIcon } from "@/component/icon";
+import { AppWhiteIcon, GitHubIcon } from "@/component/icon";
+import { APP_TITLE } from "@/lib/constant";
 
 const FEEDBACK_EMAIL = "contact@choo.ooo";
 
@@ -95,6 +96,11 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
         url: `mailto:${FEEDBACK_EMAIL}`,
         icon: Send,
       },
+      {
+        title: "Buy me a coffee",
+        url: "https://www.buymeacoffee.com/zamoca",
+        icon: Coffee,
+      },
       user && {
         title: "Manage Private Repository",
         url: `/api/manage-private-repo`,
@@ -111,12 +117,10 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <FolderTree className="size-4" />
+                  <AppWhiteIcon />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    Repo Tree Viewer
-                  </span>
+                  <span className="truncate font-semibold">{APP_TITLE}</span>
                 </div>
               </Link>
             </SidebarMenuButton>

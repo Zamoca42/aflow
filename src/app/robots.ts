@@ -1,12 +1,12 @@
 import { MetadataRoute } from "next";
-
+import { APP_URL } from "@/lib/constant";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: "/private/",
+      disallow: "/repo/private/",
     },
-    sitemap: "https://repo-tree-viewer.vercel.app/sitemap.xml",
+    sitemap: `${APP_URL}/sitemap.xml`,
   };
 }

@@ -90,27 +90,37 @@ IMPORTANT: ${PROMPT.important}
   if (!success) {
     return { architecture: null, isCached, success };
   } else {
-    const model = new ChatGoogleGenerativeAI({
-      model: "gemini-1.5-flash",
-      maxRetries: 3,
-      temperature: 1.0,
-      cache,
-      streaming: true,
-      streamUsage: true,
-      callbacks: [ratelimitHandler],
-    });
+    const abortController = new AbortController();
+    const timeoutId = setTimeout(() => abortController.abort(), TIMEOUT);
 
-    const architecture = await model.pipe(parser).invoke(formattedPrompt, {
-      timeout: TIMEOUT,
-      callbacks: [
-        {
-          handleLLMEnd: (output) => {
-            isCached = !output.llmOutput;
+    try {
+      const model = new ChatGoogleGenerativeAI({
+        model: "gemini-1.5-flash",
+        maxRetries: 3,
+        temperature: 1.0,
+        cache,
+        streaming: true,
+        streamUsage: true,
+        callbacks: [ratelimitHandler],
+      });
+
+      const architecture = await model.pipe(parser).invoke(formattedPrompt, {
+        timeout: TIMEOUT,
+        signal: abortController.signal,
+        callbacks: [
+          {
+            handleLLMEnd: (output) => {
+              isCached = !output.llmOutput;
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    return { architecture, isCached, success };
+      return { architecture, isCached, success };
+    } catch (error) {
+      throw error;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
+import { type LucideIcon, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   Collapsible,
@@ -35,9 +36,23 @@ export function NavRepository({
     }[];
   }[];
 }) {
+  const router = useRouter();
+
+  const handleRefresh = () => {
+    router.refresh();
+  };
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Your Repositories</SidebarGroupLabel>
+      <SidebarGroupLabel className="gap-1">
+        <span>Your Repositories</span>
+        <button
+          onClick={handleRefresh}
+          className="rounded-md p-1 text-sidebar-foreground/70 hover:animate-spin"
+        >
+          <RefreshCw className="size-3" />
+        </button>
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible

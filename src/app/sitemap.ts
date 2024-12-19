@@ -1,19 +1,14 @@
 import { MetadataRoute } from "next";
+import { APP_URL } from "@/lib/constant";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const url = "https://repo-tree-viewer.vercel.app";
+  const url = APP_URL;
   return [
     {
       url,
-      lastModified: new Date(),
+      lastModified: new Date().toDateString(),
       changeFrequency: "yearly",
       priority: 1,
-    },
-    {
-      url: `${url}/repo`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
     },
   ];
 }
