@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
   sidebar,
 }: Readonly<{
@@ -46,9 +46,9 @@ export default async function RootLayout({
           name="google-site-verification"
           content="oSV9NtTWaNbiQLGBEQoyeABgw0rLEsPLWryHpK-SqCI"
         />
-        <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon/icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
+        <meta name="google-adsense-account" content="ca-pub-8854904636978298" />
+        <link rel="icon" href="/favicon/aflow-icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon/aflow-apple-icon.png" />
       </head>
       <body
         className={cn("min-h-screen font-sans antialiased", inter.variable)}

@@ -1,4 +1,6 @@
-export const APP_TITLE = "GitHub Repo Tree Viewer";
+export const GITHUB_APP_NAME = "adotflow";
+export const APP_TITLE = "A.flow";
+export const APP_URL = "https://www.aflow.dev";
 export const RATE_LIMIT_DURATION = 90;
 export const APP_DESCRIPTION = "Visualize your GitHub repos as ASCII trees";
 export const PROMPT = {

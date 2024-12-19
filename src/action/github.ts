@@ -5,12 +5,13 @@ import { TreeBuilder } from "@/action/tree";
 import { TreeStructureSchema } from "@/lib/schema";
 import { Repository, GitTreeResponse, InstallationInfo } from "@/type";
 import { signIn } from "@/action/auth";
+import { APP_TITLE } from "@/lib/constant";
 
 export class GitHubClient {
   private client: typeof ky;
   private username: string;
   private accessToken: string;
-  private readonly githubAppName = "repository-tree-viewer";
+  private readonly githubAppName = APP_TITLE;
 
   constructor(session: Session) {
     this.username = session.user?.username!;
