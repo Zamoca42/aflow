@@ -34,13 +34,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-  sidebar,
   header,
+  sidebar,
+  children,
 }: Readonly<{
-  children: React.ReactNode;
-  sidebar: React.ReactNode;
   header: React.ReactNode;
+  sidebar: React.ReactNode;
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en">

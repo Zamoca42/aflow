@@ -1,6 +1,5 @@
-import { HeaderBreadcrumb } from "@/component/header/header-breadcumb";
+import { AppHeader } from "@/component/header/app-header";
 
-export default async function DefaultHeader() {
-  return <HeaderBreadcrumb />;
+export default async function DefaultHeaderPage() {
+  return <AppHeader />;
 }
-

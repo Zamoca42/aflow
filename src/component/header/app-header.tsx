@@ -7,12 +7,17 @@ import { useVisualize } from "@/context/visualizer";
 import { useRateLimit } from "@/context/rate-limit";
 import { RATE_LIMIT_DURATION } from "@/lib/constant";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function AppHeader() {
   const { isLoading, handleVisualize } = useVisualize();
   const { isDisabled, setRateLimited, remainingTime } = useRateLimit();
   const pathname = usePathname();
-  const isRepoPage = pathname.startsWith("/repo/");
+  const [isRepoPage, setIsRepoPage] = useState(false);
+
+  useEffect(() => {
+    setIsRepoPage(pathname.startsWith("/repo/"));
+  }, [pathname]);
 
   const onVisualize = async () => {
     try {
