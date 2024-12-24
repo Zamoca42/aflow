@@ -1,5 +1,4 @@
 import { Skeleton } from "@/component/ui/skeleton";
-import { RepoHeader } from "@/component/repo/header";
 
 export function SkeletonTreeLoader() {
   return (
@@ -26,9 +25,6 @@ export function SkeletonTreeLoader() {
 export default function Loading() {
   return (
     <>
-      <header className="flex h-16 shrink-0 items-center gap-2">
-        <RepoHeader/>
-      </header>
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="min-h-[50vh] rounded-xl bg-sidebar p-4">
           <SkeletonTreeLoader />

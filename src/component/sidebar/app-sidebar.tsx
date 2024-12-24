@@ -27,6 +27,7 @@ import { NavUser } from "@/component/sidebar/nav-user";
 import { signIn } from "next-auth/react";
 import { AppWhiteIcon, GitHubIcon } from "@/component/icon";
 import { APP_TITLE } from "@/lib/constant";
+import { NavDocs } from "@/component/sidebar/nav-docs";
 
 const FEEDBACK_EMAIL = "contact@choo.ooo";
 
@@ -90,6 +91,12 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
         badge: transformedRepos.private.length,
       },
     ],
+    docs: [
+      {
+        title: "Welcome",
+        url: "welcome",
+      },
+    ],
     menu: [
       {
         title: "Feedback",
@@ -129,6 +136,7 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <NavRepository items={data.repo} />
+        <NavDocs items={data.docs} />
         <NavMenus items={data.menu} user={user} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

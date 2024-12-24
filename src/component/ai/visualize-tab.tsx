@@ -23,7 +23,7 @@ interface VisualizeTabProps {
 
 const MermaidViewer = dynamic(
   () =>
-    import("@/component/repo/mermaid-viewer").then((mod) => mod.MermaidViewer),
+    import("@/component/ai/mermaid-viewer").then((mod) => mod.MermaidViewer),
   {
     ssr: false,
   }

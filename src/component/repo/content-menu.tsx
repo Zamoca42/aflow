@@ -12,7 +12,7 @@ import { ClipboardIcon, DownloadIcon, MoreHorizontalIcon } from "lucide-react";
 import { Button } from "@/component/ui/button";
 import { Checkbox } from "@/component/ui/checkbox";
 import { TreeViewElement } from "@/component/tree-view-api";
-import { useTreeView } from "@/component/repo/tree-view";
+import { useTreeView } from "@/context/tree-view";
 
 type CheckboxOptionProps = {
   id: string;

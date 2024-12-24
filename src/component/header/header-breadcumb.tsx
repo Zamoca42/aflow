@@ -12,7 +12,7 @@ import { Separator } from "@/component/ui/separator";
 import { Fragment, useMemo } from "react";
 import { usePathname } from "next/navigation";
 
-export function RepoHeader() {
+export function HeaderBreadcrumb() {
   const pathname = usePathname();
   const breadcrumbItems = useMemo(() => {
     const paths = pathname.split("/").filter(Boolean);

@@ -1,11 +1,12 @@
 import { AppSidebar } from "@/component/sidebar/app-sidebar";
+import { getSidebarData } from "@/action/sidebar";
 import { auth } from "@/action/auth";
-import { redirect } from "next/navigation";
 
-export default async function DefaultSidebar() {
+export default async function SidebarPage() {
   const session = await auth();
-  if (!session) {
-    return redirect("/");
+  if (!session || session.error === "RefreshAccessTokenError") {
+    return <AppSidebar user={null} allRepos={[]} />;
   }
-  return <AppSidebar user={null} allRepos={[]} />;
+  const { user, allRepos } = await getSidebarData(session);
+  return <AppSidebar user={user} allRepos={allRepos} />;
 }

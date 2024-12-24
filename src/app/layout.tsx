@@ -4,8 +4,9 @@ import { Inter } from "next/font/google";
 import { cn } from "@/lib/util";
 import { APP_DESCRIPTION, APP_TITLE } from "@/lib/constant";
 import { SidebarInset, SidebarProvider } from "@/component/ui/sidebar";
-import { TreeViewProvider } from "@/component/repo/tree-view";
-import { RateLimitProvider } from "@/component/rate-limit";
+import { TreeViewProvider } from "@/context/tree-view";
+import { RateLimitProvider } from "@/context/rate-limit";
+import { VisualizeProvider } from "@/context/visualizer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -35,9 +36,11 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
   sidebar,
+  header,
 }: Readonly<{
   children: React.ReactNode;
   sidebar: React.ReactNode;
+  header: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -56,12 +59,21 @@ export default function RootLayout({
         <TreeViewProvider>
           <SidebarProvider>
             <RateLimitProvider>
-              <aside>{sidebar}</aside>
-              <SidebarInset>
-                <main className="flex-1 overflow-x-hidden overflow-y-auto">
-                  {children}
-                </main>
-              </SidebarInset>
+              <VisualizeProvider>
+                <aside>{sidebar}</aside>
+                <SidebarInset>
+                  <header className="flex h-16 shrink-0 items-center gap-2">
+                    <div className="flex flex-1 items-center gap-2 px-4">
+                      {header}
+                    </div>
+                  </header>
+                  <main className="flex-1 overflow-x-hidden overflow-y-auto">
+                    <div className="flex flex-1 flex-col gap-2 px-4 pt-0">
+                      {children}
+                    </div>
+                  </main>
+                </SidebarInset>
+              </VisualizeProvider>
             </RateLimitProvider>
           </SidebarProvider>
         </TreeViewProvider>
