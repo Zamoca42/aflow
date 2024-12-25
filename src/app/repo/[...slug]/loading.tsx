@@ -1,3 +1,4 @@
+import { AppBreadcrumb } from "@/component/header/app-breadcumb";
 import { Skeleton } from "@/component/ui/skeleton";
 
 export function SkeletonTreeLoader() {
@@ -25,8 +26,13 @@ export function SkeletonTreeLoader() {
 export default function Loading() {
   return (
     <>
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-        <div className="min-h-[50vh] rounded-xl bg-sidebar p-4">
+      <header className="header-container">
+        <div className="component-menu">
+          <AppBreadcrumb items={[]} />
+        </div>
+      </header>
+      <div className="content-container">
+        <div className="component-content">
           <SkeletonTreeLoader />
         </div>
       </div>

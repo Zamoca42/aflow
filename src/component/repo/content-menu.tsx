@@ -1,7 +1,7 @@
 "use client";
 
 import { copyToClipboard, simulateDownload } from "@/lib/share";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,7 @@ import { Button } from "@/component/ui/button";
 import { Checkbox } from "@/component/ui/checkbox";
 import { TreeViewElement } from "@/component/tree-view-api";
 import { useTreeView } from "@/context/tree-view";
+import { MarkdownTreeGenerator } from "@/action/markdown";
 
 type CheckboxOptionProps = {
   id: string;
@@ -41,17 +42,22 @@ function CheckboxOption({
 
 interface RepoContentMenuProps {
   repoName: string;
-  markdownTree: string;
   structuredRepoTree: TreeViewElement[];
 }
 
 export function RepoContentMenu({
   structuredRepoTree,
-  markdownTree,
   repoName,
 }: RepoContentMenuProps) {
   const { showIcons, showFiles, setShowIcons, setShowFiles } = useTreeView();
   const [isCopied, setIsCopied] = useState(false);
+  const markdownTree = useMemo(() => {
+    return new MarkdownTreeGenerator(
+      structuredRepoTree,
+      showIcons,
+      showFiles
+    ).generate();
+  }, [structuredRepoTree, showIcons, showFiles]);
 
   const handleCopyToClipboard = async () => {
     if (!markdownTree) {
@@ -81,7 +87,7 @@ export function RepoContentMenu({
   };
 
   return (
-    <div className="component-menu">
+    <div className="component-menu-end">
       <div className="flex items-center space-x-2">
         <CheckboxOption
           id="show-icons"

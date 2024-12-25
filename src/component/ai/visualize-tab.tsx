@@ -93,7 +93,7 @@ export function VisualizeTab({
         className="w-full"
         onValueChange={(value) => setActiveTab(value)}
       >
-        <div className="component-menu">
+        <div className="component-menu-end">
           <div>
             {activeTab === "preview" ? (
               <div className="flex items-center gap-2">

@@ -6,7 +6,6 @@ import { APP_DESCRIPTION, APP_TITLE } from "@/lib/constant";
 import { SidebarInset, SidebarProvider } from "@/component/ui/sidebar";
 import { TreeViewProvider } from "@/context/tree-view";
 import { RateLimitProvider } from "@/context/rate-limit";
-import { VisualizeProvider } from "@/context/visualizer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -34,11 +33,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  header,
   sidebar,
   children,
 }: Readonly<{
-  header: React.ReactNode;
   sidebar: React.ReactNode;
   children: React.ReactNode;
 }>) {
@@ -59,21 +56,12 @@ export default function RootLayout({
         <TreeViewProvider>
           <SidebarProvider>
             <RateLimitProvider>
-              <VisualizeProvider>
-                <aside>{sidebar}</aside>
-                <SidebarInset>
-                  <header className="flex h-16 shrink-0 items-center gap-2">
-                    <div className="flex flex-1 items-center gap-2 px-4">
-                      {header}
-                    </div>
-                  </header>
-                  <main className="flex-1 overflow-x-hidden overflow-y-auto">
-                    <div className="flex flex-1 flex-col gap-2 px-4 pt-0">
-                      {children}
-                    </div>
-                  </main>
-                </SidebarInset>
-              </VisualizeProvider>
+              <aside>{sidebar}</aside>
+              <SidebarInset>
+                <main className="flex-1 overflow-x-hidden overflow-y-auto">
+                  {children}
+                </main>
+              </SidebarInset>
             </RateLimitProvider>
           </SidebarProvider>
         </TreeViewProvider>
