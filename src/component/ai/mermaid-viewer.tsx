@@ -64,7 +64,7 @@ export function MermaidViewer({ code, activeTab }: MermaidViewerProps) {
             pzoomRef.current?.zoom(DEFAULT_ZOOM);
           }
         }
-      }, 50);
+      }, 100);
 
       return () => {
         pzoomRef.current?.destroy();

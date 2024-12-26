@@ -52,11 +52,10 @@ export function RepoContentMenu({
   const { showIcons, showFiles, setShowIcons, setShowFiles } = useTreeView();
   const [isCopied, setIsCopied] = useState(false);
   const markdownTree = useMemo(() => {
-    return new MarkdownTreeGenerator(
-      structuredRepoTree,
+    return new MarkdownTreeGenerator(structuredRepoTree, {
       showIcons,
-      showFiles
-    ).generate();
+      showFiles,
+    }).generate();
   }, [structuredRepoTree, showIcons, showFiles]);
 
   const handleCopyToClipboard = async () => {

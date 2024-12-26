@@ -1,16 +1,27 @@
 import { TreeViewElement } from "@/component/tree-view-api";
 
+interface TreeGeneratorOptions {
+  showIcons?: boolean;
+  showFiles?: boolean;
+  hideDotFiles?: boolean;
+}
+
 export class MarkdownTreeGenerator {
   private showIcons: boolean;
   private showFiles: boolean;
+  private hideDotFiles: boolean;
   private tree: TreeViewElement[];
   private prefixCache: Map<string, { current: string; next: string }>;
   private stringBuilder: string[];
-  
-  constructor(tree: TreeViewElement[], showIcons: boolean = true, showFiles: boolean = true) {
+
+  constructor(
+    tree: TreeViewElement[],
+    options: TreeGeneratorOptions
+  ) {
     this.tree = tree;
-    this.showIcons = showIcons;
-    this.showFiles = showFiles;
+    this.showIcons = options.showIcons ?? true;
+    this.showFiles = options.showFiles ?? true;
+    this.hideDotFiles = options.hideDotFiles ?? false;
     this.prefixCache = new Map();
     this.stringBuilder = [];
   }
@@ -27,6 +38,22 @@ export class MarkdownTreeGenerator {
     return !!(this.tree && Array.isArray(this.tree) && this.tree.length > 0);
   }
 
+  private isDotFile(name: string): boolean {
+    return name.startsWith('.');
+  }
+
+  private shouldIncludeItem(item: TreeViewElement): boolean {
+    if (!this.showFiles && !item.children) {
+      return false;
+    }
+
+    if (this.hideDotFiles && this.isDotFile(item.name)) {
+      return false;
+    }
+
+    return true;
+  }
+
   private getCachedPrefix(isLast: boolean): { current: string; next: string } {
     const key = isLast.toString();
     if (!this.prefixCache.has(key)) {
@@ -39,8 +66,8 @@ export class MarkdownTreeGenerator {
   }
 
   private appendNode(
-    item: TreeViewElement, 
-    prefix: string, 
+    item: TreeViewElement,
+    prefix: string,
     isLast: boolean,
     icons: { folder: string; file: string }
   ): void {
@@ -54,27 +81,30 @@ export class MarkdownTreeGenerator {
     prefix: string = ""
   ): void {
     const icons = this.getIcons();
-    const visibleItems = this.showFiles 
-      ? elements 
-      : elements.filter(item => item.children);
+    const visibleItems = elements.filter(item => this.shouldIncludeItem(item));
     const length = visibleItems.length;
 
     for (let i = 0; i < length; i++) {
       const item = visibleItems[i];
       const isLast = i === length - 1;
-      
+
       this.appendNode(item, prefix, isLast, icons);
-      
+
       if (item.children) {
         const { next: nextPrefix } = this.getCachedPrefix(isLast);
-        this.generateTreeStructure(item.children, prefix + nextPrefix);
+        const filteredChildren = item.children.filter(child =>
+          this.shouldIncludeItem(child)
+        );
+        if (filteredChildren.length > 0) {
+          this.generateTreeStructure(filteredChildren, prefix + nextPrefix);
+        }
       }
     }
   }
 
   public generate(): string {
     if (!this.isValidTree()) return "";
-    
+
     this.stringBuilder = [];
     this.generateTreeStructure(this.tree);
     return this.stringBuilder.join("");

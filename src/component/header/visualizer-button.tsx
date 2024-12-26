@@ -29,11 +29,11 @@ export function VisualizerButton({
 }: VisualizerButtonProps) {
   const { isDisabled, setRateLimited, remainingTime } = useRateLimit();
   const markdownTree = useMemo(() => {
-    return new MarkdownTreeGenerator(
-      structuredRepoTree,
-      false,
-      true
-    ).generate();
+    return new MarkdownTreeGenerator(structuredRepoTree, {
+      showIcons: false,
+      showFiles: true,
+      hideDotFiles: true,
+    }).generate();
   }, [structuredRepoTree]);
 
   const handleVisualize = async () => {
