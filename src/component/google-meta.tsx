@@ -27,7 +27,6 @@ export function GoogleMeta() {
         name="google-site-verification"
         content="oSV9NtTWaNbiQLGBEQoyeABgw0rLEsPLWryHpK-SqCI"
       />
-      <meta name="google-adsense-account" content="ca-pub-8854904636978298" />
     </>
   );
 }

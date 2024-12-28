@@ -8,6 +8,7 @@ import { TreeViewProvider } from "@/context/tree-view";
 import { RateLimitProvider } from "@/context/rate-limit";
 import { CookieBanner } from "@/component/cookie-banner";
 import { GoogleMeta } from "@/component/google-meta";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -46,6 +47,11 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon/aflow-icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon/aflow-apple-icon.png" />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8854904636978298"
+          crossOrigin="anonymous"
+        ></Script>
         <GoogleMeta />
       </head>
       <body
