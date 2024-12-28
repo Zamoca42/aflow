@@ -1,8 +1,10 @@
 export const GITHUB_APP_NAME = "adotflow";
 export const APP_TITLE = "A.flow";
 export const APP_URL = "https://www.aflow.dev";
+export const CACHE_HOURS = 12;
+export const RATE_LIMIT_TOKEN = 3;
 export const RATE_LIMIT_DURATION = 90;
-export const APP_DESCRIPTION = "Visualize your GitHub repos as ASCII trees";
+export const APP_DESCRIPTION = "A tool for visualizing the directory structure of GitHub repositories as ASCII trees and generating architecture diagrams powered by AI, enabling quick understanding and efficient sharing of codebases.";
 export const PROMPT = {
   role: "You are an expert software architect specializing in analyzing codebases and creating detailed architectural diagrams.",
   guide: "Here's a step-by-step guide for analyzing the architecture of a given repository/project.",
@@ -41,3 +43,37 @@ export const PROMPT = {
   },
   important: "Respond ONLY with a JSON object. Do not include any explanations, notes, or additional text before or after the JSON."
 } as const;
+export const EXAMPLE_MERMAID_CODE = `flowchart TD
+  subgraph Frontend["Frontend"]
+    AppLayout["App Layout"]
+    RepositoryPage["Repository Page"]
+    Sidebar["Sidebar"]
+    UIComponents["UI Components"]
+  end
+
+  subgraph Backend["Backend"]
+    APIRoutes["API Routes"]
+    Authentication["Authentication"]
+    GitHubIntegration["GitHub Integration"]
+  end
+
+  subgraph CoreServices["Core Services"]
+    AIVisualizer["AI Visualizer"]
+    MarkdownParser["Markdown Parser"]
+    TreeGenerator["Tree Generator"]
+  end
+
+  subgraph DataLayer["Data Layer"]
+    RedisCache["Redis Cache"]
+    GitHubAPI["GitHub API"]
+  end
+
+  RepositoryPage --> CoreServices
+  GitHubIntegration --> GitHubAPI
+  GitHubAPI --> RepositoryPage
+  APIRoutes --> Authentication
+  AIVisualizer --> RedisCache
+  TreeGenerator --> MarkdownParser
+  Sidebar --> GitHubIntegration
+  AppLayout --> UIComponents
+  `;

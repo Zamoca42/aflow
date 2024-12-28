@@ -28,6 +28,7 @@ import { signIn } from "next-auth/react";
 import { AppWhiteIcon, GitHubIcon } from "@/component/icon";
 import { APP_TITLE } from "@/lib/constant";
 import { NavDocs } from "@/component/sidebar/nav-docs";
+import docsList from "@/content/list.json";
 
 const FEEDBACK_EMAIL = "contact@choo.ooo";
 
@@ -91,12 +92,7 @@ export function AppSidebar({ user, allRepos, ...props }: AppSidebarProps) {
         badge: transformedRepos.private.length,
       },
     ],
-    docs: [
-      {
-        title: "Welcome",
-        url: "welcome",
-      },
-    ],
+    docs: [...docsList.filter((doc) => doc.url !== "privacy-policy")],
     menu: [
       {
         title: "Feedback",

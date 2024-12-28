@@ -1,0 +1,55 @@
+import { VisualizeTab } from "@/component/ai/visualize-tab";
+import { EXAMPLE_MERMAID_CODE } from "@/lib/constant";
+
+# Getting Started
+
+This guide will help you get started with AFlow, a tool that helps you visualize and understand GitHub repository structures using AI-powered architecture diagrams.
+
+## Authenticate with GitHub
+
+1. Click the "Sign in with GitHub" button in the sidebar
+2. You'll be redirected to A.flow GitHub app's Authorization or Installation page
+   ![GitHub App Installation](/images/github-auth.png)
+3. Review the requested permissions:
+   - Read access to your repositories
+   - Read access to your email address
+4. Click "Authorize" or "Install" to proceed
+
+## Generate Architecture Diagram
+
+1. Select a repository from the sidebar
+2. Click the "AI Visualizer" button in the repository header
+3. Wait for the diagram to be generated
+
+This is an example of the generated architecture diagram:
+
+{<div className="component-content"><VisualizeTab mermaidCode={EXAMPLE_MERMAID_CODE} isCached={true} repoName={"example"} /></div>}
+
+### Understanding the Visualizer Interface
+
+The visualizer has two main tabs:
+
+**Preview Tab**:
+- View the generated architecture diagram
+- Use zoom controls (bottom right)
+- Download as SVG
+- Check if result is cached (⚡icon)
+
+**Code Tab**:
+- View and copy the mermaid code
+- Use in your own documentation
+
+## Manage your private repositories
+
+To access private repositories, you'll need to explicitly grant access:
+
+1. Click the "Manage Private Repository" button in the sidebar
+2. You'll see a list of your private repositories
+   ![Private Repos Management](/images/private-repos.png)
+3. Select repositories you want to access and click "Save"
+4. Selected private repositories will appear in your sidebar under the "Private" section
+
+## Feedback
+
+If you have any feedback or suggestions, please feel free to contact me at [contact@choo.ooo](mailto:contact@choo.ooo).
+

@@ -1,6 +1,18 @@
 [
   {
-    "title": "Welcome",
-    "url": "welcome"
+    "title": "Getting Started",
+    "url": "getting-started"
+  },
+  {
+    "title": "Features",
+    "url": "features"
+  },
+  {
+    "title": "Changelog",
+    "url": "changelog"
+  },
+  {
+    "title": "Privacy Policy",
+    "url": "privacy-policy"
   }
 ]

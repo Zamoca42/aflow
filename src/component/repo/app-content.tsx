@@ -31,7 +31,7 @@ export function AppRepoContent({
     .map((path) => path.charAt(0).toUpperCase() + path.slice(1));
 
   return (
-    <>
+    <div className="main-container">
       <header className="header-container">
         <div className="component-menu">
           <AppBreadcrumb items={breadcrumbItems} />
@@ -80,6 +80,6 @@ export function AppRepoContent({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -15,13 +15,13 @@ export function AppDocs({ children }: AppDocsProps) {
     .map((path) => path.charAt(0).toUpperCase() + path.slice(1));
 
   return (
-    <>
+    <div className="main-container">
       <header className="header-container">
         <div className="component-menu">
           <AppBreadcrumb items={breadcrumbItems} />
         </div>
       </header>
       <div className="content-container">{children}</div>
-    </>
+    </div>
   );
 }

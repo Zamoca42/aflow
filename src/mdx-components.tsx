@@ -14,11 +14,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     h4: (props: any) => <h4 className="my-4 text-base font-bold" {...props} />,
     h5: (props: any) => <h5 className="my-4 text-sm font-bold" {...props} />,
     h6: (props: any) => <h6 className="my-4 text-xs font-bold" {...props} />,
-    p: (props: any) => <p className="text-base" {...props} />,
+    p: (props: any) => <p className="text-base my-1" {...props} />,
     a: (props: any) => <a className="text-blue-500" {...props} />,
     ul: (props: any) => <ul className="ml-6 list-disc" {...props} />,
     ol: (props: any) => <ol className="ml-6 list-decimal" {...props} />,
-    li: (props: any) => <li className="text-base" {...props} />,
+    li: (props: any) => <li className="text-base space-y-1 my-1" {...props} />,
     blockquote: (props: any) => (
       <blockquote className="border-l-4 border-gray-300 pl-4" {...props} />
     ),
@@ -29,12 +29,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     strong: (props: any) => <strong className="text-base" {...props} />,
     hr: (props: any) => <hr className="my-4" {...props} />,
     img: (props: any) => (
-      // eslint-disable-next-line jsx-a11y/alt-text
-      <Image
-        sizes="100vw"
-        style={{ width: "100%", height: "auto" }}
-        {...(props as ImageProps)}
-      />
+      <div className="flex justify-start my-2">
+        {/* eslint-disable-next-line jsx-a11y/alt-text */}
+        <Image
+          sizes="25vw"
+          style={{ width: "50%", height: "auto" }}
+          width={1000}
+          height={1000}
+          {...(props as ImageProps)}
+        />
+      </div>
     ),
     ...components,
   };

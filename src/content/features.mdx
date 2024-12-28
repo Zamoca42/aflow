@@ -1,0 +1,53 @@
+import { CACHE_HOURS, RATE_LIMIT_DURATION, RATE_LIMIT_TOKEN, EXAMPLE_MERMAID_CODE } from "@/lib/constant";
+import { MermaidViewer } from "@/component/ai/mermaid-viewer";
+
+# Features
+
+## AI Architecture Diagram Generator
+
+1. Click the "AI Visualizer" button in the repository header.
+2. The app will generate a tree diagram of the selected repositories.
+3. Download the diagram as a SVG file or mermaid code.
+
+### Rate Limiting & Caching
+
+- **Rate Limit**: Limited to {RATE_LIMIT_TOKEN} requests per {RATE_LIMIT_DURATION} seconds to ensure service stability
+  - When rate limit is reached, you'll need to wait for the cooldown period
+  - The remaining wait time is displayed on the button (e.g., "Wait {RATE_LIMIT_DURATION}s")
+
+- **Caching System**:
+  - Generated diagrams are cached for {CACHE_HOURS} hours in production
+  - Cached results are indicated by a database icon (⚡) in the preview tab
+  - Cached responses are instant and don't count against your rate limit
+
+### Diagram Controls
+
+{<div className="component-content"><MermaidViewer code={EXAMPLE_MERMAID_CODE} activeTab={"preview"} /></div>}
+
+The preview tab provides several controls for viewing the diagram:
+- Zoom in/out buttons
+- Reset view button
+- Pan: Click and drag to move around
+- Current zoom level is displayed as a percentage
+
+### Export Options
+
+You can export the diagram in two formats:
+1. **SVG File**: Click the download icon in the preview tab
+   - High-quality vector graphics
+   - Suitable for documentation or presentations
+
+2. **Mermaid Code**: Switch to the code tab
+   - Copy the mermaid code to clipboard
+
+## Markdown Tree Generator
+
+1. Click the "Download Markdown" button in the repository tree component.
+2. The app will generate a markdown tree structure of your repository.
+
+### Tree View Options
+
+You can customize how the tree is displayed using these options:
+
+- **Show Icons**: Toggle folder (📁) and file (📄) icons in the tree view
+- **Show Files**: Toggle visibility of files (when disabled, only folders are shown)

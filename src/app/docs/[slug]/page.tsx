@@ -1,4 +1,5 @@
 import { AppDocs } from "@/component/docs/app-docs";
+import docsList from "@/content/list.json";
 
 export default async function Page({
   params,
@@ -16,7 +17,8 @@ export default async function Page({
 }
 
 export function generateStaticParams() {
-  return [{ slug: "welcome" }];
+  const docs = docsList.map((doc) => ({ slug: doc.url }));
+  return docs;
 }
 
 export const dynamicParams = false;

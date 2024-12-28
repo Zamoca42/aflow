@@ -8,13 +8,14 @@ import { UpstashRedisCache } from "@/lib/upstash-redis";
 import { UpstashRatelimitHandler } from "@langchain/community/callbacks/handlers/upstash_ratelimit";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import { PROMPT, RATE_LIMIT_DURATION } from "@/lib/constant";
+import { CACHE_HOURS, PROMPT, RATE_LIMIT_DURATION, RATE_LIMIT_TOKEN } from "@/lib/constant";
 import { auth } from "@/action/auth";
+// import { ChatAnthropic } from "@langchain/anthropic";
 
 const TIMEOUT = 60000;
-const CACHE_TTL = 60 * 60 * 12;
+
+const CACHE_TTL = CACHE_HOURS * 60 * 60;
 const DEV_CACHE_TTL = 60 * 5;
-const RATE_LIMIT_TOKEN = 3;
 
 const redis = new Redis({
   url: process.env.KV_REST_API_URL,
@@ -103,6 +104,16 @@ IMPORTANT: ${PROMPT.important}
         streamUsage: true,
         callbacks: [ratelimitHandler],
       });
+
+      // const model = new ChatAnthropic({
+      //   model: "claude-3-5-sonnet-20240620",
+      //   maxRetries: 3,
+      //   temperature: 1.0,
+      //   cache,
+      //   streaming: true,
+      //   streamUsage: true,
+      //   callbacks: [ratelimitHandler],
+      // });
 
       const architecture = await model.pipe(parser).invoke(formattedPrompt, {
         timeout: TIMEOUT,

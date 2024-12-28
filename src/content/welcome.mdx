@@ -1,8 +1,42 @@
-# 문서 제목
+import { APP_DESCRIPTION, CACHE_HOURS, RATE_LIMIT_DURATION, RATE_LIMIT_TOKEN } from "@/lib/constant";
 
-이것은 MDX로 작성된 문서입니다.
+# Welcome to A.flow!
 
-## 하위 제목
+{APP_DESCRIPTION}
 
-- 리스트 항목 1
-- 리스트 항목 2
+## What is A.flow?
+
+A.flow is an AI-powered tool that helps developers understand and document GitHub repositories by:
+- Generating interactive architecture diagrams
+- Creating ASCII tree representations of repository structures
+- Providing easy-to-share documentation formats
+
+## Key Features
+
+### 🎨 AI Architecture Visualization
+- Automatically analyzes your repository structure
+- Generates clean, organized architecture diagrams
+- Uses mermaid.js for interactive diagrams
+- Supports SVG export for documentation
+
+### 📁 Repository Tree View
+- Clear visualization of repository structure
+- Customizable view options (show/hide files, icons)
+- Easy-to-copy markdown format
+- Filters for better organization
+
+### ⚡ Smart Caching
+- Fast response times with cached results
+- {CACHE_HOURS}-hour cache duration in production
+- Rate limit protection
+- Automatic cache invalidation
+
+### 🔒 Privacy First
+- Minimal permission requirements
+- Optional private repository access
+- No data storage beyond caching
+- Secure GitHub OAuth integration
+
+## Getting Started
+
+Ready to visualize your repositories? Check out our [Getting Started](/getting-started) guide to begin!

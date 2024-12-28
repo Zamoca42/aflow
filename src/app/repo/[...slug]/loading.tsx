@@ -25,7 +25,7 @@ export function SkeletonTreeLoader() {
 
 export default function Loading() {
   return (
-    <>
+    <div className="main-container">
       <header className="header-container">
         <div className="component-menu">
           <AppBreadcrumb items={[]} />
@@ -36,6 +36,6 @@ export default function Loading() {
           <SkeletonTreeLoader />
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,6 +1,9 @@
 "use client";
 
-import { Minus, Plus, type LucideIcon } from "lucide-react";
+import { type LucideIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { cn } from "@/lib/util";
 
 import {
   SidebarGroup,
@@ -8,16 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
 } from "@/component/ui/sidebar";
-import Link from "next/link";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/component/ui/collapsible";
 
 export function NavDocs({
   items,
@@ -34,42 +28,29 @@ export function NavDocs({
     }[];
   }[];
 }) {
+  const pathname = usePathname();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel className="gap-1">
         <span>Documents</span>
       </SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item, index) => (
-          <Collapsible
-            key={item.title}
-            defaultOpen={index === 1}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <Link href={`/docs/${item.url}`}>{item.title}</Link>
-                  <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                  <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              {item.items?.length ? (
-                <CollapsibleContent>
-                  <SidebarMenuSub>
-                    {item.items.map((item) => (
-                      <SidebarMenuSubItem key={item.title}>
-                        <SidebarMenuSubButton asChild>
-                          <Link href={`/docs/${item.url}`}>{item.title}</Link>
-                        </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
-                    ))}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              ) : null}
+        {items.map((item) => {
+          const docsPath = `/docs/${item.url}`;
+          const isActive = pathname === docsPath;
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                className={cn(
+                  isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
+                )}
+              >
+                <Link href={docsPath}>{item.title}</Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
-          </Collapsible>
-        ))}
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );

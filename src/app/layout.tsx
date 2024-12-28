@@ -6,6 +6,8 @@ import { APP_DESCRIPTION, APP_TITLE } from "@/lib/constant";
 import { SidebarInset, SidebarProvider } from "@/component/ui/sidebar";
 import { TreeViewProvider } from "@/context/tree-view";
 import { RateLimitProvider } from "@/context/rate-limit";
+import { CookieBanner } from "@/component/cookie-banner";
+import { GoogleMeta } from "@/component/google-meta";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -42,13 +44,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta
-          name="google-site-verification"
-          content="oSV9NtTWaNbiQLGBEQoyeABgw0rLEsPLWryHpK-SqCI"
-        />
-        <meta name="google-adsense-account" content="ca-pub-8854904636978298" />
         <link rel="icon" href="/favicon/aflow-icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon/aflow-apple-icon.png" />
+        <GoogleMeta />
       </head>
       <body
         className={cn("min-h-screen font-sans antialiased", inter.variable)}
@@ -62,6 +60,7 @@ export default function RootLayout({
                   {children}
                 </main>
               </SidebarInset>
+              <CookieBanner />
             </RateLimitProvider>
           </SidebarProvider>
         </TreeViewProvider>
