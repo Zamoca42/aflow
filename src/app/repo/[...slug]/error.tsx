@@ -1,8 +1,17 @@
 "use client";
 
-import { ErrorMessage } from "@/component/message";
 import { ErrorMessageProps } from "@/type";
 import { useEffect } from "react";
+
+export const ErrorMessage = ({ title, message, action }: ErrorMessageProps) => (
+  <div className="main-container">
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h2 className="message-title">{title}</h2>
+      <p className="mb-4">{message}</p>
+      {action}
+    </div>
+  </div>
+);
 
 export default function Error({
   error,
