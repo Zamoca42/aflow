@@ -14,7 +14,7 @@
     "@langchain/anthropic": "^0.3.11",
     "@langchain/community": "^0.3.18",
     "@langchain/core": "^0.3.26",
-    "@langchain/google-genai": "^0.1.5",
+    "@langchain/google-genai": "^0.1.7",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.1.2",
